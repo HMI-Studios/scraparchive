@@ -123,6 +123,22 @@ async function post(user_id, { title, bucket_id }) {
       `;
     }
 
+    if (Boolean(entryData.recursive)) {
+      const [_, children] = await getByUserID(user_id, { 'buckets.bucket_id': entryData.bucket_id });
+
+      for (const child of children) {
+        const [status] = await putPermissions(user_id, {
+          user_id: entryData.user_id,
+          bucket_id: child.id,
+          permissionLvl: entryData.permissionLvl,
+          recursive: true,
+        });
+
+        if (status !== 200) throw new Error(`Non-OK code returned when setting child bucket permissions!`);
+      }
+    }
+
+    delete entryData.recursive;
     return [200, await executeQuery(queryString, entryData)];
   } catch (err) {
     console.error(err);

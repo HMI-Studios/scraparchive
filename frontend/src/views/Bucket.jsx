@@ -62,8 +62,8 @@ const permColumns = [
       label: 'Email',
   },
   {
-      id: 'permissionLvl',
-      numeric: true,
+      id: 'permissionTitle',
+      numeric: false,
       label: 'Permission Level',
   },
 ];
@@ -112,10 +112,18 @@ class Bucket extends React.Component {
     const { bucketID } = this.props;
     const { data: bucket } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketID}`);
     console.log(bucket)
-    // envelope.perms = envelope.perms.map(row => ({
-    //   ...row,
-    //   id: row.user_id,
-    // }));
+    bucket.perms = bucket.perms.map(row => ({
+      ...row,
+      id: row.user_id,
+      permissionTitle: {
+        0: 'No Access',
+        1: 'Read Access',
+        2: 'Read/Comment',
+        3: 'Write Access',
+        4: 'Write/Delete',
+        5: 'Admin',
+      }[row.permissionLvl],
+    }));
     this.setState({ bucket });
   }
 
@@ -157,12 +165,13 @@ class Bucket extends React.Component {
     this.setState({ editMode: !editMode });
   }
 
-  async changeUserPermissions({ user_id, permissionLvl }) {
+  async changeUserPermissions({ user_id, permissionLvl, recursive }) {
     const { bucketID } = this.props;
     await axios.put(`${window.ADDR_PREFIX}/api/buckets/permissions`, {
       user_id,
       bucket_id: bucketID,
       permissionLvl,
+      recursive,
     });
     this.fetchBucket();
   }
@@ -225,12 +234,14 @@ class Bucket extends React.Component {
               <InputForm submitFn={this.changeUserPermissions} fields={{
                 user_id: 'User',
                 permissionLvl: 'Permission Level',
+                recursive: 'Apply to all children',
               }} required={{
                 user_id: true,
                 permissionLvl: true,
               }} types={{
                 user_id: 'select',
                 permissionLvl: 'select',
+                recursive: 'select',
               }} dropdownOptions={{
                 user_id: contacts,
                 permissionLvl: {
@@ -240,6 +251,7 @@ class Bucket extends React.Component {
                   3: 'Write Access',
                   4: 'Write/Delete',
                 },
+                recursive: { 1: 'Yes', 0: 'No' },
               }} />
             )}
           </div>
