@@ -9,6 +9,7 @@ import Profile from './views/Profile.jsx';
 
 import ScratchPad from './views/ScratchPad.jsx';
 import BucketList from './views/BucketList.jsx';
+import Bucket from './views/Bucket.jsx';
 import ContactsList from './views/ContactsList.jsx';
 
 import NavBar from './components/NavBar.jsx';
@@ -54,6 +55,11 @@ class App extends React.Component {
     const { view, darkMode, user, verifying, viewData } = this.state;
     const ADDR_PREFIX = window.ADDR_PREFIX;
 
+    const BucketWrapper = (props) => {
+      const params = useParams();
+      return <Bucket {...{ ...props }} bucketID={params.bucketID} />;
+    };
+
     return (
       <div className={darkMode ? 'dark' : 'light'}>
         <div className="page">
@@ -90,6 +96,9 @@ class App extends React.Component {
                   } />
                   <Route path={`${ADDR_PREFIX}/buckets`} element={
                     <BucketList />
+                  } />
+                  <Route path={`${ADDR_PREFIX}/buckets/:bucketID/*`} element={
+                    <BucketWrapper user={user} />
                   } />
                   <Route path={`${ADDR_PREFIX}/contacts/*`} element={
                     <ContactsList user={user} />

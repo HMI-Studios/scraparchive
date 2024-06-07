@@ -12,6 +12,7 @@ const api = loadAPIModules([
   'users',
   'buckets',
   'contacts',
+  'scraps',
 ]);
 
 module.exports = api;

@@ -47,11 +47,14 @@ class APIRoute {
     console.log(path);
     app.all(path, Auth.verifySession, async (req, res) => {
       const method = req.method.toUpperCase();
-      console.log('APIRoute', path, method, req.session, req.params, req.body);
+      console.log(path, method, Object.keys(this.methodFuncs))
+      // console.log('APIRoute', path, method, req.session, req.params, req.body);
       if (method in this.methodFuncs) {
         const [status, data] = await this.methodFuncs[method](req);
         res.status(status);
         if (data !== undefined) return res.json(data);
+      } else {
+        return res.sendStatus(405);
       }
       return res.end();
     })
@@ -59,6 +62,11 @@ class APIRoute {
       child.setup(path);
     }
   }
+}
+
+async function frmtData(promise, callback) {
+  const [status, data] = await promise;
+  return [status, callback(data)];
 }
 
 const apiRoutes = new APIRoute('/api', { GET: () => console.log('TODO') }, [
@@ -72,7 +80,16 @@ const apiRoutes = new APIRoute('/api', { GET: () => console.log('TODO') }, [
     GET: (req) => api.buckets.getByUserID(req.session.user.id),
     POST: (req) => api.buckets.post(req.session.user.id, req.body),
   }, [
-
+    new APIRoute('/permissions', {
+      PUT: (req) => api.buckets.putPermissions(req.session.user.id, req.body),
+    }),
+    new APIRoute('/:bucketID', {
+      GET: (req) => api.buckets.getByID(req.session.user.id, req.params.bucketID),
+    }, [
+      new APIRoute('/scraps', {
+        GET: (req) => api.scraps.getManyByUserID(req.session.user.id, { 'scraps.bucket_id': req.params.bucketID }),
+      }),
+    ]),
   ]),
   new APIRoute('/contacts', {
     GET: (req) => api.contacts.getByUserID(req.session.user.id),

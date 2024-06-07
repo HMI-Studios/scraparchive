@@ -50,8 +50,8 @@ class ScratchPad extends React.Component {
             <InputForm submitFn={this.submitEntry} fields={{
               title: 'Title',
               bucket: 'Bucket',
-              earthdate: 'Earth Date',
-              earthtime: 'Earth Time',
+              earthdate: 'Start Date',
+              earthtime: 'Start Time',
               canon: 'Canon Status',
             }} required={{
             }} types={{
