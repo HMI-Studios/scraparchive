@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const views = ['pile', 'scratchpad', 'contacts'];
-const viewNames = ['Scrap Pile', 'Scratchpad', 'Contacts'];
+const views = ['pile', 'scratchpad', 'buckets', 'contacts'];
+const viewNames = ['Scrap Pile', 'Scratchpad', 'Buckets', 'Contacts'];
 
 const NavBar = ({ setView, user }) => (
   <nav className="navBar">

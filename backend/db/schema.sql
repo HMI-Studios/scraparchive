@@ -22,6 +22,7 @@ CREATE TABLE sessions (
 
 CREATE TABLE buckets (
   id INT NOT NULL AUTO_INCREMENT,
+  title VARCHAR(64),
   bucket_id INT,
   FOREIGN KEY (bucket_id) REFERENCES buckets (id),
   PRIMARY KEY (id)

@@ -10,6 +10,7 @@ function loadAPIModules(modules) {
 const api = loadAPIModules([
   'session',
   'users',
+  'buckets',
 ]);
 
 module.exports = api;

@@ -62,12 +62,18 @@ class APIRoute {
 }
 
 const apiRoutes = new APIRoute('/api', { GET: () => console.log('TODO') }, [
-  new APIRoute('/users', { GET: (req) => api.users.getMany() }, [
+  new APIRoute('/users', { GET: () => api.users.getMany() }, [
     new APIRoute('/:id', {
       GET: (req) => api.users.getOne({ id: req.params.id }),
       DELETE: api.users.del,
     }),
   ]),
+  new APIRoute('/buckets', {
+    GET: (req) => api.buckets.getByUserID(req.session.user.id),
+    POST: (req) => api.buckets.post(req.session.user.id, req.body),
+  }, [
+
+  ])
 ]);
 
 apiRoutes.setup(ADDR_PREFIX);

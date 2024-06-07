@@ -8,6 +8,7 @@ import Signup from './views/Signup.jsx';
 import Profile from './views/Profile.jsx';
 
 import ScratchPad from './views/ScratchPad.jsx';
+import BucketList from './views/BucketList.jsx';
 
 import NavBar from './components/NavBar.jsx';
 
@@ -85,6 +86,9 @@ class App extends React.Component {
                   } />
                   <Route path={`${ADDR_PREFIX}/scratchpad`} element={
                     <ScratchPad />
+                  } />
+                  <Route path={`${ADDR_PREFIX}/buckets`} element={
+                    <BucketList />
                   } />
                 </Routes>
               )}

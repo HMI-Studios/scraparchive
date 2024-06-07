@@ -20,7 +20,7 @@ class ScratchPad extends React.Component {
   }
 
   async fetchData() {
-    const { data } = await axios.get(`${window.ADDR_PREFIX}/api/users`);
+    const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
     console.log(data);
     const buckets = [];
     this.setState({ buckets });
