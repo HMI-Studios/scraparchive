@@ -4,8 +4,8 @@ const { ADDR_PREFIX } = require('../config');
 
 module.exports.createSession = (req, res, next) => {
   // console.log('res cookie', res.cookie);
-  if (req.cookies['budgeteerid']) {
-    api.session.getOne({hash: req.cookies['budgeteerid']})
+  if (req.cookies['archiviumuid']) {
+    api.session.getOne({hash: req.cookies['archiviumuid']})
       .then((session) => {
         if (session) {
           // console.log('session:', session.user);
@@ -30,7 +30,7 @@ module.exports.createSession = (req, res, next) => {
             })
             .then((session) => {
               // console.log('session:', session)
-              res.cookie('budgeteerid', session.hash);
+              res.cookie('archiviumuid', session.hash);
               req.session = {
                 id: session.id,
                 hash: session.hash
@@ -54,7 +54,7 @@ module.exports.createSession = (req, res, next) => {
     })
     .then((session) => {
       // console.log('session:', session)
-      res.cookie('budgeteerid', session.hash);
+      res.cookie('archiviumuid', session.hash);
       req.session = {
         id: session.id,
         hash: session.hash
