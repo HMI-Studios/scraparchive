@@ -20,6 +20,14 @@ CREATE TABLE sessions (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE contacts (
+  user_id INT NOT NULL,
+  contact_id INT NOT NULL,
+  accepted BOOLEAN,
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (contact_id) REFERENCES users (id)
+);
+
 CREATE TABLE buckets (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(64),
@@ -38,12 +46,14 @@ CREATE TABLE userbucketpermissions (
 
 CREATE TABLE scraps (
   id INT NOT NULL AUTO_INCREMENT,
+  author_id INT,
   bucket_id INT,
   title VARCHAR(64),
   body TEXT,
   earthdate INT,
   earthtime TIME,
   canon_status TINYINT, /* 0 - not canon, 1 - headcanon, 2 - potential canon, 3 - mostly canon, 4 - canon draft, 5 - confirmed canon */
+  FOREIGN KEY (author_id) REFERENCES users (id),
   FOREIGN KEY (bucket_id) REFERENCES buckets (id),
   PRIMARY KEY (id)
 );

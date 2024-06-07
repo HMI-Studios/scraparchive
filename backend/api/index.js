@@ -11,6 +11,7 @@ const api = loadAPIModules([
   'session',
   'users',
   'buckets',
+  'contacts',
 ]);
 
 module.exports = api;

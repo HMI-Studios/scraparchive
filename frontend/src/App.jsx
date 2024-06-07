@@ -9,6 +9,7 @@ import Profile from './views/Profile.jsx';
 
 import ScratchPad from './views/ScratchPad.jsx';
 import BucketList from './views/BucketList.jsx';
+import ContactsList from './views/ContactsList.jsx';
 
 import NavBar from './components/NavBar.jsx';
 
@@ -89,6 +90,9 @@ class App extends React.Component {
                   } />
                   <Route path={`${ADDR_PREFIX}/buckets`} element={
                     <BucketList />
+                  } />
+                  <Route path={`${ADDR_PREFIX}/contacts/*`} element={
+                    <ContactsList user={user} />
                   } />
                 </Routes>
               )}

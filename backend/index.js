@@ -73,7 +73,16 @@ const apiRoutes = new APIRoute('/api', { GET: () => console.log('TODO') }, [
     POST: (req) => api.buckets.post(req.session.user.id, req.body),
   }, [
 
-  ])
+  ]),
+  new APIRoute('/contacts', {
+    GET: (req) => api.contacts.getByUserID(req.session.user.id),
+    POST: (req) => api.contacts.postByUserID(req.session.user.id, req.body),
+  }, [
+    new APIRoute('/:id', {
+      PUT: (req) => api.contacts.putByUserAndContactID(req.session.user.id, req.params.id),
+      DELETE: (req) => api.contacts.deleteByUserAndContactID(req.session.user.id, req.params.id),
+    }),
+  ]),
 ]);
 
 apiRoutes.setup(ADDR_PREFIX);
