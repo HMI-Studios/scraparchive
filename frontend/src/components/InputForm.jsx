@@ -24,6 +24,21 @@ class InputForm extends React.Component {
     this.submit = this.submit.bind(this);
   }
 
+  componentDidUpdate(prevProps, _) {
+    const { fields } = this.state;
+    const newFields = { ...fields };
+    if (prevProps.defaults !== this.props.defaults) {
+      let didChange = false;
+      for (const key in this.props.defaults) {
+        if (this.props.defaults[key] !== prevProps.defaults[key] && fields[key] === prevProps.defaults[key]) {
+          newFields[key] = this.props.defaults[key];
+          didChange = true;
+        }
+      }
+      if (didChange) this.setState({ fields: newFields });
+    }
+  }
+
   validate() {
     const { required, validators } = this.props;
     const { fields } = this.state;

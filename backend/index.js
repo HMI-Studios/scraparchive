@@ -51,6 +51,7 @@ class APIRoute {
       // console.log('APIRoute', path, method, req.session, req.params, req.body);
       if (method in this.methodFuncs) {
         const [status, data] = await this.methodFuncs[method](req);
+        console.log(status, data)
         res.status(status);
         if (data !== undefined) return res.json(data);
       } else {
@@ -79,7 +80,12 @@ const apiRoutes = new APIRoute('/api', {}, [
   new APIRoute('/scraps', {
     GET: (req) => api.scraps.getManyByUserID(req.session.user.id),
     POST: (req) => api.scraps.post(req.session.user.id, req.body),
-  }, []),
+  }, [
+    new APIRoute('/:id', {
+      GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, { 'scrap.id': req.params.id }), scraps => scraps[0]),
+      PUT: (req) => api.scraps.put(req.session.user.id, req.params.id, req.body),
+    }),
+  ]),
   new APIRoute('/buckets', {
     GET: (req) => api.buckets.getByUserID(req.session.user.id),
     POST: (req) => api.buckets.post(req.session.user.id, req.body),

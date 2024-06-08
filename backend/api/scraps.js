@@ -60,7 +60,49 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
     };
 
     const queryString = `INSERT INTO scrap SET ?`;
-    return [200, executeQuery(queryString, newEntry)];
+    return [201, await executeQuery(queryString, newEntry)];
+  } catch (err) {
+    console.error(err);
+    return [500];
+  }
+}
+
+/**
+ * 
+ * @param {number} user_id the id of the current user
+ * @param {number} scrap_id the id of scrap to update
+ * @param {*} entryData data to update
+ * @returns 
+ */
+async function put(user_id, scrap_id, { bucket_id, title, body, earthdate, earthtime, canon_status }) {
+  try {
+
+    const changes = {
+      bucket_id: bucket_id || undefined,
+      title: title || undefined,
+      body: body || undefined,
+      earthdate: earthdate || undefined,
+      earthtime: earthtime || undefined,
+      canon_status: canon_status || undefined
+    };
+
+    const queryString1 = `
+      UPDATE scrap SET ? 
+      WHERE
+        id = ${scrap_id}
+        ${bucket_id
+          ? `AND ${user_id} IN (SELECT perms.user_id FROM user_bucket_permissions as perms WHERE perms.bucket_id = ${bucket_id})`
+          : ''
+        }
+        AND (
+          ${user_id} IN (
+            SELECT perms.user_id FROM user_bucket_permissions as perms WHERE perms.bucket_id = scrap.bucket_id
+          )
+          OR (scrap.bucket_id is NULL AND scrap.author_id = ${user_id})
+        );
+    `;
+
+    return [200, await executeQuery(queryString1, changes)];
   } catch (err) {
     console.error(err);
     return [500];
@@ -70,4 +112,5 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
 module.exports = {
     getManyByUserID,
     post,
+    put,
   };

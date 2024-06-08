@@ -1,4 +1,5 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 import PageTitle from '../components/PageTitle.jsx';
@@ -10,14 +11,21 @@ class ScratchPad extends React.Component {
     super(props);
     this.state = {
       buckets: null,
+      scrap: null,
       body: '\t',
+      redirect: null,
     };
     this.fetchData = this.fetchData.bind(this);
+    this.fetchScrap = this.fetchScrap.bind(this);
     this.submitEntry = this.submitEntry.bind(this);
   }
 
   componentDidMount() {
     this.fetchData();
+
+    if (this.props.scrapID) {
+      this.fetchScrap();
+    }
   }
 
   async fetchData() {
@@ -30,37 +38,62 @@ class ScratchPad extends React.Component {
     this.setState({ buckets });
   }
 
+  async fetchScrap() {
+    const { data: scrap } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/${this.props.scrapID}`);
+    console.log('SCRAP', scrap);
+    // const buckets = {};
+    // data.map(bucket => {
+    //   buckets[bucket.id] = bucket.title;
+    // })
+    this.setState({ scrap, body: scrap.body });
+  }
+
   submitEntry(data) {
+    const { scrapID } = this.props;
     const { body } = this.state;
-    axios.post(`${window.ADDR_PREFIX}/api/scraps`, {
-      ...data,
-      body,
-    })
-    .then(() => {
-      this.fetchData();
-    })
+    if (scrapID) {
+      axios.put(`${window.ADDR_PREFIX}/api/scraps/${scrapID}`, {
+        ...data,
+        body,
+      })
+      .then(() => {
+        // this.setState({ scrap: null })
+        this.fetchData();
+        this.fetchScrap();
+      })
+    } else {
+      axios.post(`${window.ADDR_PREFIX}/api/scraps`, {
+        ...data,
+        body,
+      })
+      .then(({ data }) => {
+        this.setState({ redirect: `/scratchpad/${data.insertId}` });
+      })
+    }
   }
 
   render() {
-    const { buckets, body } = this.state;
+    const { scrapID } = this.props;
+    const { buckets, scrap, body, redirect } = this.state;
 
-    const now = new Date();
-    const localDate = new Date((now - (now.getTimezoneOffset() * 60000)));
-    const dateString = localDate.toISOString().slice(0, -8);
+    const defaults = scrapID ? scrap : {};
 
     return (
       <>
         <PageTitle title={'Scratchpad'} />
-        {(buckets && <div className="row stack">
+        {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}${redirect}`} />}
+        {((buckets && (!scrapID || scrap)) && <div className="row stack">
           <TextArea value={body} onChange={(body) => this.setState({ body })} />
           <div className="stack">
-            <InputForm submitFn={this.submitEntry} fields={{
+            <InputForm submitFn={this.submitEntry} submitText={scrapID && 'Save'} fields={{
               title: 'Title',
               bucket_id: 'Bucket',
               earthdate: 'Start Date',
               earthtime: 'Start Time',
               canon_status: 'Canon Status',
-            }} types={{
+            }} defaults={
+              defaults
+            } types={{
               bucket_id: 'select',
               earthdate: 'number',
               earthtime: 'time',

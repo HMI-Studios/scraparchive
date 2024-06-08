@@ -56,6 +56,11 @@ class App extends React.Component {
     const { view, darkMode, user, verifying, viewData } = this.state;
     const ADDR_PREFIX = window.ADDR_PREFIX;
 
+    const ScrapWrapper = (props) => {
+      const params = useParams();
+      return <ScratchPad {...{ ...props }} scrapID={params.scrapID} />;
+    };
+
     const BucketWrapper = (props) => {
       const params = useParams();
       return <Bucket {...{ ...props }} bucketID={params.bucketID} />;
@@ -94,6 +99,9 @@ class App extends React.Component {
                   } /> */}
                   <Route path={`${ADDR_PREFIX}/scratchpad`} element={
                     <ScratchPad />
+                  } />
+                  <Route path={`${ADDR_PREFIX}/scratchpad/:scrapID`} element={
+                    <ScrapWrapper />
                   } />
                   <Route path={`${ADDR_PREFIX}/buckets`} element={
                     <BucketList />
