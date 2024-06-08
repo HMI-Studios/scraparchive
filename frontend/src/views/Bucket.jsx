@@ -141,9 +141,10 @@ class Bucket extends React.Component {
 
   async fetchChildBuckets() {
     const { bucketID } = this.props;
-    const { data: income } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketID}/children`)
+    const { data: children } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketID}/children`)
+    console.log(children)
     // const income = data.map(row => ({...row, posted_on: new Date(row.posted_on)}));
-    this.setState({ income });
+    this.setState({ children });
   }
 
   async fetchContacts() {
@@ -212,7 +213,9 @@ class Bucket extends React.Component {
         displayName: 'Scraps',
         content: (
           <div className="stack">
-            <EnhancedTable key={'scraps'} refresh={this.fetchScraps} columns={scrapColumns} rows={scraps} defaultSort={'earthdate'} />
+            <EnhancedTable key={'scraps'} refresh={this.fetchScraps} columns={scrapColumns} rows={scraps} defaultSort={'earthdate'} links={{
+            title: (row) => (`/scratchpad/${row.id}`)
+          }} />
           </div>
         ),
       },
@@ -220,7 +223,9 @@ class Bucket extends React.Component {
         displayName: 'Child Buckets',
         content: (
           <div className="stack">
-            <EnhancedTable key={'children'} refresh={this.fetchChildBuckets} columns={childBucketColumns} rows={children} defaultSort={'title'} />
+            <EnhancedTable key={'children'} refresh={this.fetchChildBuckets} columns={childBucketColumns} rows={children} defaultSort={'title'} links={{
+            title: (row) => (`/buckets/${row.id}`)
+          }} />
           </div>
         ),
       },

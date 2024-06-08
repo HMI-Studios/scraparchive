@@ -69,7 +69,7 @@ async function frmtData(promise, callback) {
   return [status, callback(data)];
 }
 
-const apiRoutes = new APIRoute('/api', { GET: () => console.log('TODO') }, [
+const apiRoutes = new APIRoute('/api', {}, [
   new APIRoute('/users', { GET: () => api.users.getMany() }, [
     new APIRoute('/:id', {
       GET: (req) => api.users.getOne({ id: req.params.id }),
@@ -91,7 +91,10 @@ const apiRoutes = new APIRoute('/api', { GET: () => console.log('TODO') }, [
       GET: (req) => api.buckets.getByID(req.session.user.id, req.params.bucketID),
     }, [
       new APIRoute('/scraps', {
-        GET: (req) => api.scraps.getManyByUserID(req.session.user.id, { 'scraps.bucket_id': req.params.bucketID }),
+        GET: (req) => api.scraps.getManyByUserID(req.session.user.id, { 'scrap.bucket_id': req.params.bucketID }),
+      }),
+      new APIRoute('/children', {
+        GET: (req) => api.buckets.getByUserID(req.session.user.id, { 'bucket.bucket_id': req.params.bucketID }),
       }),
     ]),
   ]),

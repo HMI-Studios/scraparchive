@@ -15,16 +15,19 @@ async function getManyByUserID(user_id, options) {
         user.username as author,
         bucket.title as bucket
       FROM scrap
-      INNER JOIN user ON users.id = scrap.author_id
-      INNER JOIN bucket ON scraps.bucket_id = bucket.id
-      INNER JOIN user_bucket_permissions as perms ON bucket.bucket_id = perms.bucket_id
+      INNER JOIN user ON user.id = scrap.author_id
+      LEFT JOIN bucket ON scrap.bucket_id = bucket.id
+      LEFT JOIN user_bucket_permissions as perms ON bucket.id = perms.bucket_id
       WHERE
-        perms.permissions_lvl >= 1
-        AND perms.user_id = ${user_id}
+        (
+          (perms.permissions_lvl >= 1 AND perms.user_id = ${user_id})
+          OR 
+          (scrap.bucket_id is NULL AND scrap.author_id = ${user_id})
+        )
         ${options ? ` AND ${parsedOptions.string.join(' AND ')}` : ''};
     `;
-    const expenses = await executeQuery(queryString, parsedOptions.values);
-    return [200, expenses];
+    const scraps = await executeQuery(queryString, parsedOptions.values);
+    return [200, scraps];
   } catch (err) {
     console.error(err);
     return [500];
