@@ -11,6 +11,8 @@ class InputForm extends React.Component {
     if (!submitFn) throw new Error('InputForm component must have a `submitFn` prop!');
     if (!fields) throw new Error('InputForm component must have a `fields` prop!');
 
+    console.log(dropdownOptions)
+
     this.state = {
       fields: Object.keys(fields).reduce((acc, val, i) => ({...acc, [val]: (defaults && defaults[val]) || ''}), {}),
       errors: Object.keys(fields).reduce((acc, val, i) => ({...acc, [val]: null}), {}),
@@ -18,6 +20,7 @@ class InputForm extends React.Component {
         Object.keys(dropdownOptions[field]).reduce((acc, val, i) => ([...acc, { value: val, label: dropdownOptions[field][val] }]), [])
       )}), [{}]) : {},
     };
+    console.log(this.state.dropdownOptions)
     this.submit = this.submit.bind(this);
   }
 

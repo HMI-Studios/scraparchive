@@ -76,6 +76,10 @@ const apiRoutes = new APIRoute('/api', { GET: () => console.log('TODO') }, [
       DELETE: api.users.del,
     }),
   ]),
+  new APIRoute('/scraps', {
+    GET: (req) => api.scraps.getManyByUserID(req.session.user.id),
+    POST: (req) => api.scraps.post(req.session.user.id, req.body),
+  }, []),
   new APIRoute('/buckets', {
     GET: (req) => api.buckets.getByUserID(req.session.user.id),
     POST: (req) => api.buckets.post(req.session.user.id, req.body),

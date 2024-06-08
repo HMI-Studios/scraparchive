@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
 
-const TextArea = () => {
+const TextArea = ({ value, onChange }) => {
   const textareaRef = useRef(null);
-  const [content, setContent] = useState('');
 
   const onKeyDown = (e) => {
     const textarea = textareaRef.current;
@@ -18,8 +17,7 @@ const TextArea = () => {
       };
       const char = keyText[e.key] ?? '';
 
-      const newVal = textarea.value.substring(0, start) + char + textarea.value.substring(end);
-      setContent(newVal);
+      textarea.value = textarea.value.substring(0, start) + char + textarea.value.substring(end);
       textarea.selectionStart = textarea.selectionEnd = start + char.length;
     // } else if (e.key === 'Backspace' && start === end && !e.shiftKey) {
     //   const value = textarea.value;
@@ -46,16 +44,15 @@ const TextArea = () => {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     if (start === 0) text = '\t' + text;
-    const newVal = textarea.value.substring(0, start) + text + textarea.value.substring(end);
-    setContent(newVal);
+    textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
     textarea.selectionStart = textarea.selectionEnd = start + text.length;
   }
 
   return (
     <textarea
       ref={textareaRef}
-      value={content}
-      onChange={e => setContent(e.target.value)}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
       onKeyDown={onKeyDown}
       onCopy={e => handleCopy(e, false)}
       onCut={e => handleCopy(e, true)}

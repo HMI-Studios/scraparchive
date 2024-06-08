@@ -9,7 +9,8 @@ class ScratchPad extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      buckets: [],
+      buckets: null,
+      body: '\t',
     };
     this.fetchData = this.fetchData.bind(this);
     this.submitEntry = this.submitEntry.bind(this);
@@ -22,20 +23,26 @@ class ScratchPad extends React.Component {
   async fetchData() {
     const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
     console.log(data);
-    const buckets = [];
+    const buckets = {};
+    data.map(bucket => {
+      buckets[bucket.id] = bucket.title;
+    })
     this.setState({ buckets });
   }
 
   submitEntry(data) {
-    console.log(data);
-    axios.post(`${window.ADDR_PREFIX}/api/income`, data)
+    const { body } = this.state;
+    axios.post(`${window.ADDR_PREFIX}/api/scraps`, {
+      ...data,
+      body,
+    })
     .then(() => {
       this.fetchData();
     })
   }
 
   render() {
-    const { buckets } = this.state;
+    const { buckets, body } = this.state;
 
     const now = new Date();
     const localDate = new Date((now - (now.getTimezoneOffset() * 60000)));
@@ -44,25 +51,23 @@ class ScratchPad extends React.Component {
     return (
       <>
         <PageTitle title={'Scratchpad'} />
-        <div className="row stack">
-          <TextArea />
+        {(buckets && <div className="row stack">
+          <TextArea value={body} onChange={(body) => this.setState({ body })} />
           <div className="stack">
             <InputForm submitFn={this.submitEntry} fields={{
               title: 'Title',
-              bucket: 'Bucket',
+              bucket_id: 'Bucket',
               earthdate: 'Start Date',
               earthtime: 'Start Time',
-              canon: 'Canon Status',
-            }} required={{
+              canon_status: 'Canon Status',
             }} types={{
-              bucket: 'select',
+              bucket_id: 'select',
               earthdate: 'number',
               earthtime: 'time',
-              canon: 'select',
-            }} defaults={{
+              canon_status: 'select',
             }} dropdownOptions={{
-              bucket: buckets,
-              canon: {
+              bucket_id: buckets,
+              canon_status: {
                 0: 'Not Canon',
                 1: 'Headcanon',
                 2: 'Potential Canon',
@@ -72,7 +77,7 @@ class ScratchPad extends React.Component {
               },
             }}/>
           </div>
-        </div>
+        </div>)}
       </>
     );
   }

@@ -31,6 +31,40 @@ async function getManyByUserID(user_id, options) {
   }
 }
 
+/**
+ * 
+ * @param {number} user_id the id of the current user
+ * @param {*} entryData
+ * @returns 
+ */
+async function post(user_id, { bucket_id, title, body, earthdate, earthtime, canon_status }) {
+  try {
+    if (bucket_id) {
+      const permissionLvl = (await executeQuery(`
+        SELECT * FROM userbucketpermissions WHERE user_id = ${user_id} AND bucket_id = ${bucket_id};
+      `))[0]?.permissionLvl || 0;
+      if (permissionLvl < 3) return [403];
+    }
+
+    const newEntry = {
+      author_id: user_id,
+      bucket_id: bucket_id || undefined,
+      title: title || undefined,
+      body,
+      earthdate: earthdate || undefined,
+      earthtime: earthtime || undefined,
+      canon_status: canon_status || undefined
+    };
+
+    const queryString = `INSERT INTO scraps SET ?`;
+    return [200, executeQuery(queryString, newEntry)];
+  } catch (err) {
+    console.error(err);
+    return [500];
+  }
+}
+
 module.exports = {
     getManyByUserID,
+    post,
   };
