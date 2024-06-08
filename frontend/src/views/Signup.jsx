@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 import InputForm from '../components/InputForm.jsx';
@@ -7,6 +7,9 @@ import InputForm from '../components/InputForm.jsx';
 class Signup extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      redirect: null,
+    };
 
     this.signup = this.signup.bind(this);
   }
@@ -23,8 +26,11 @@ class Signup extends React.Component {
 
   render() {
     const { name, setView } = this.props;
+    const { redirect } = this.state;
+
     return (
       <div className="auth">
+        {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}${redirect}`} />}
         <div className="stack">
           <InputForm submitFn={this.signup} submitText={'Sign Up'} fields={{
             username: 'Username',
