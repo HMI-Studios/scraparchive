@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS scraparchive;
 CREATE DATABASE scraparchive;
 USE scraparchive;
 
-CREATE TABLE users (
+CREATE TABLE user (
   id INT NOT NULL AUTO_INCREMENT,
   username VARCHAR(32) UNIQUE,
   email VARCHAR(64) UNIQUE,
@@ -12,39 +12,39 @@ CREATE TABLE users (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE sessions (
+CREATE TABLE session (
   id INT NOT NULL AUTO_INCREMENT,
   hash VARCHAR(64),
   user_id INT,
-  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (user_id) REFERENCES user (id),
   PRIMARY KEY (id)
 );
 
-CREATE TABLE contacts (
+CREATE TABLE contact (
   user_id INT NOT NULL,
   contact_id INT NOT NULL,
   accepted BOOLEAN,
-  FOREIGN KEY (user_id) REFERENCES users (id),
-  FOREIGN KEY (contact_id) REFERENCES users (id)
+  FOREIGN KEY (user_id) REFERENCES user (id),
+  FOREIGN KEY (contact_id) REFERENCES user (id)
 );
 
-CREATE TABLE buckets (
+CREATE TABLE bucket (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(64),
   bucket_id INT,
-  FOREIGN KEY (bucket_id) REFERENCES buckets (id),
+  FOREIGN KEY (bucket_id) REFERENCES bucket (id),
   PRIMARY KEY (id)
 );
 
-CREATE TABLE userbucketpermissions (
+CREATE TABLE user_bucket_permissions (
   user_id INT,
   bucket_id INT,
-  permissionLvl TINYINT, /* 0 - no permission, 1 - read, 2 - read/suggest, 3 - read/write, 4 - read/write/delete, 5 - full admin */
-  FOREIGN KEY (user_id) REFERENCES users (id),
-  FOREIGN KEY (bucket_id) REFERENCES buckets (id)
+  permissions_lvl TINYINT, /* 0 - no permission, 1 - read, 2 - read/suggest, 3 - read/write, 4 - read/write/delete, 5 - full admin */
+  FOREIGN KEY (user_id) REFERENCES user (id),
+  FOREIGN KEY (bucket_id) REFERENCES bucket (id)
 );
 
-CREATE TABLE scraps (
+CREATE TABLE scrap (
   id INT NOT NULL AUTO_INCREMENT,
   author_id INT,
   bucket_id INT,
@@ -53,7 +53,7 @@ CREATE TABLE scraps (
   earthdate INT,
   earthtime TIME,
   canon_status TINYINT, /* 0 - not canon, 1 - headcanon, 2 - potential canon, 3 - mostly canon, 4 - canon draft, 5 - confirmed canon */
-  FOREIGN KEY (author_id) REFERENCES users (id),
-  FOREIGN KEY (bucket_id) REFERENCES buckets (id),
+  FOREIGN KEY (author_id) REFERENCES user (id),
+  FOREIGN KEY (bucket_id) REFERENCES bucket (id),
   PRIMARY KEY (id)
 );

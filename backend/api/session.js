@@ -9,11 +9,11 @@ const users = require('./users');
  */
 async function getOne(options) {
   const parsedOptions = parseData(options);
-  const queryString = `SELECT * FROM sessions WHERE ${parsedOptions.string.join(' AND ')} LIMIT 1;`;
+  const queryString = `SELECT * FROM session WHERE ${parsedOptions.string.join(' AND ')} LIMIT 1;`;
   const data = await executeQuery(queryString, parsedOptions.values);
   const session = data[0];
   if (!session || !session.user_id) return session;
-  const [errCode, user] = await users.getOne({ id: session.user_id });
+  const [_, user] = await users.getOne({ id: session.user_id });
   session.user = user;
   return session;
 }
@@ -25,7 +25,7 @@ async function getOne(options) {
 function post() {
   const data = utils.createRandom32String();
   const hash = utils.createHash(data);
-  const queryString = `INSERT INTO sessions SET ?`;
+  const queryString = `INSERT INTO session SET ?`;
   return executeQuery(queryString, { hash });
 }
 
@@ -37,7 +37,7 @@ function post() {
  */
 function put(options, values) {
   const parsedOptions = parseData(options);
-  const queryString = `UPDATE sessions SET ? WHERE ${parsedOptions.string.join(' AND ')}`;
+  const queryString = `UPDATE session SET ? WHERE ${parsedOptions.string.join(' AND ')}`;
   return executeQuery(queryString, Array.prototype.concat(values, parsedOptions.values));
 }
 
@@ -48,7 +48,7 @@ function put(options, values) {
  */
 function del(options) {
   const parsedOptions = parseData(options);
-  const queryString = `DELETE FROM sessions WHERE ${parsedOptions.string.join(' AND ')}`;
+  const queryString = `DELETE FROM session WHERE ${parsedOptions.string.join(' AND ')}`;
   return executeQuery(queryString, parsedOptions.values);
 }
 

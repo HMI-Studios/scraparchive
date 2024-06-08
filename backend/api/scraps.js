@@ -11,15 +11,15 @@ async function getManyByUserID(user_id, options) {
     const parsedOptions = parseData(options);
     let queryString = `
       SELECT
-        scraps.*,
-        users.username as author,
-        buckets.title as bucket
-      FROM scraps
-      INNER JOIN users ON users.id = scraps.author_id
-      INNER JOIN buckets ON scraps.bucket_id = buckets.id
-      INNER JOIN userbucketpermissions as perms ON buckets.bucket_id = perms.bucket_id
+        scrap.*,
+        user.username as author,
+        bucket.title as bucket
+      FROM scrap
+      INNER JOIN user ON users.id = scrap.author_id
+      INNER JOIN bucket ON scraps.bucket_id = bucket.id
+      INNER JOIN user_bucket_permissions as perms ON bucket.bucket_id = perms.bucket_id
       WHERE
-        perms.permissionLvl >= 1
+        perms.permissions_lvl >= 1
         AND perms.user_id = ${user_id}
         ${options ? ` AND ${parsedOptions.string.join(' AND ')}` : ''};
     `;
@@ -41,7 +41,7 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
   try {
     if (bucket_id) {
       const permissionLvl = (await executeQuery(`
-        SELECT * FROM userbucketpermissions WHERE user_id = ${user_id} AND bucket_id = ${bucket_id};
+        SELECT * FROM user_bucket_permissions WHERE user_id = ${user_id} AND bucket_id = ${bucket_id};
       `))[0]?.permissionLvl || 0;
       if (permissionLvl < 3) return [403];
     }
@@ -56,7 +56,7 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
       canon_status: canon_status || undefined
     };
 
-    const queryString = `INSERT INTO scraps SET ?`;
+    const queryString = `INSERT INTO scrap SET ?`;
     return [200, executeQuery(queryString, newEntry)];
   } catch (err) {
     console.error(err);

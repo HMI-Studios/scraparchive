@@ -10,15 +10,15 @@ async function getByUserID(user_id) {
   try {
     const queryString = `
       SELECT
-        contacts.*,
-        user.username as user_name,
-        contact.username as contact_name,
-        user.email as user_email,
-        contact.email as contact_email
-      FROM contacts
-      INNER JOIN users as user ON contacts.user_id = user.id
-      INNER JOIN users as contact ON contacts.contact_id = contact.id
-      WHERE user.id = ${user_id} OR contact.id = ${user_id};
+        contact.*,
+        u.username as user_name,
+        c.username as contact_name,
+        u.email as user_email,
+        c.email as contact_email
+      FROM contact
+      INNER JOIN user as u ON contact.user_id = u.id
+      INNER JOIN user as c ON contact.contact_id = c.id
+      WHERE u.id = ${user_id} OR c.id = ${user_id};
     `;
     const contats = (await executeQuery(queryString)).map(contact => {
       if (contact.user_id === user_id) {
@@ -51,19 +51,19 @@ async function postByUserID(user_id, { email }) {
 
   const oldEntry = (await executeQuery(`
     SELECT *
-    FROM contacts
+    FROM contact
     WHERE
       user_id = ${user_id}
-      AND contact_id = (SELECT id FROM users WHERE email="${email}");
+      AND contact_id = (SELECT id FROM user WHERE email="${email}");
   `))[0];
   
   if (oldEntry) return [409];
 
   const queryString = `
-    INSERT INTO contacts
+    INSERT INTO contact
     VALUES (
       ${user_id},
-      (SELECT id FROM users WHERE email="${email}"),
+      (SELECT id FROM user WHERE email="${email}"),
       0
     )
   `;
@@ -87,7 +87,7 @@ async function postByUserID(user_id, { email }) {
 async function putByUserAndContactID(user_id, contact_id) {
 
   const queryString = `
-    UPDATE contacts
+    UPDATE contact
     SET accepted = 1
     WHERE 
       user_id = ${contact_id}
@@ -115,7 +115,7 @@ async function putByUserAndContactID(user_id, contact_id) {
 async function deleteByUserAndContactID(user_id, contact_id) {
 
   const queryString = `
-    DELETE FROM contacts
+    DELETE FROM contact
     WHERE 
       user_id = ${contact_id}
       AND contact_id = ${user_id};

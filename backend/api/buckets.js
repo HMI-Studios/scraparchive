@@ -10,12 +10,12 @@ async function getByUserID(user_id, options) {
     const parsedOptions = parseData(options);
     let queryString = `
       SELECT
-        buckets.*, parent.title AS parent_title
-      FROM buckets
-      INNER JOIN userbucketpermissions AS perms ON perms.bucket_id = buckets.id
-      LEFT JOIN buckets AS parent ON parent.id = buckets.bucket_id
+        bucket.*, parent.title AS parent_title
+      FROM bucket
+      INNER JOIN user_bucket_permissions AS perms ON perms.bucket_id = bucket.id
+      LEFT JOIN bucket AS parent ON parent.id = bucket.bucket_id
       WHERE
-        perms.permissionLvl >= 1
+        perms.permissions_lvl >= 1
         AND perms.user_id = ${user_id}
         ${options ? ` AND ${parsedOptions.string.join(' AND ')}` : ''};
     `;
@@ -36,18 +36,18 @@ async function getByUserID(user_id, options) {
 async function getByID(user_id, bucket_id) {
   try {
     const [status, buckets] = await getByUserID(user_id, {
-      'buckets.id': bucket_id,
+      'bucket.id': bucket_id,
     });
     const bucket = buckets[0];
 
     const queryString = `
       SELECT 
-        perms.user_id, perms.permissionLvl,
-        users.email, users.username as user_name
-      FROM userbucketpermissions as perms
-      INNER JOIN users ON perms.user_id = users.id
+        perms.user_id, perms.permissions_lvl,
+        user.email, user.username as user_name
+      FROM user_bucket_permissions as perms
+      INNER JOIN user ON perms.user_id = user.id
       WHERE
-        perms.permissionLvl >= 1
+        perms.permissions_lvl >= 1
         AND perms.bucket_id = ${bucket_id};
     `;
     const perms = await executeQuery(queryString);
@@ -77,7 +77,7 @@ async function post(user_id, { title, bucket_id }) {
     title,
     bucket_id,
   };
-  const queryString1 = `INSERT INTO buckets SET ?`;
+  const queryString1 = `INSERT INTO bucket SET ?`;
   const insertData = await executeQuery(queryString1, newEntry);
 
   const newPermEntry = {
@@ -86,7 +86,7 @@ async function post(user_id, { title, bucket_id }) {
     permissionLvl: 5,
   };
 
-  const queryString2 = `INSERT INTO userbucketpermissions SET ?`;
+  const queryString2 = `INSERT INTO user_bucket_permissions SET ?`;
   return [201, [insertData, executeQuery(queryString2, newPermEntry)]];
 }
 
@@ -100,31 +100,31 @@ async function post(user_id, { title, bucket_id }) {
   try {
 
     const permissionLvl = (await executeQuery(`
-      SELECT * FROM userbucketpermissions WHERE user_id = ${user_id} AND bucket_id = ${entryData.bucket_id};
+      SELECT * FROM user_bucket_permissions WHERE user_id = ${user_id} AND bucket_id = ${entryData.bucket_id};
     `))[0]?.permissionLvl || 0;
     if (permissionLvl !== 5) return [403];
 
     const oldEntry = (await executeQuery(`
-      SELECT * FROM userbucketpermissions WHERE user_id = ${entryData.user_id} AND bucket_id = ${entryData.bucket_id};
+      SELECT * FROM user_bucket_permissions WHERE user_id = ${entryData.user_id} AND bucket_id = ${entryData.bucket_id};
     `))[0];
 
     let queryString;
     
     if (oldEntry) {
       queryString = `
-        UPDATE userbucketpermissions SET ? 
+        UPDATE user_bucket_permissions SET ? 
         WHERE
           user_id = ${entryData.user_id}
           AND bucket_id = ${entryData.bucket_id};
       `;
     } else {
       queryString = `
-        INSERT INTO userbucketpermissions SET ?;
+        INSERT INTO user_bucket_permissions SET ?;
       `;
     }
 
     if (Boolean(entryData.recursive)) {
-      const [_, children] = await getByUserID(user_id, { 'buckets.bucket_id': entryData.bucket_id });
+      const [_, children] = await getByUserID(user_id, { 'bucket.bucket_id': entryData.bucket_id });
 
       for (const child of children) {
         const [status] = await putPermissions(user_id, {

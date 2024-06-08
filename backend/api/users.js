@@ -11,7 +11,7 @@ async function getOne(options, includeAuth=false) {
   try {
     if (!options || Object.keys(options).length === 0) throw 'options required for api.get.user';
     const parsedOptions = parseData(options);
-    const queryString = `SELECT * FROM users WHERE ${parsedOptions.string.join(' AND ')} LIMIT 1;`;
+    const queryString = `SELECT * FROM user WHERE ${parsedOptions.string.join(' AND ')} LIMIT 1;`;
     const user = (await executeQuery(queryString, parsedOptions.values))[0];
     if (!includeAuth) {
       delete user.password;
@@ -35,12 +35,11 @@ async function getMany(options) {
     let queryString;
     if (options) queryString = `
       SELECT 
-        id, username,
-        createdAt, updatedAt
-      FROM users 
+        id, username, email, created_at
+      FROM user 
       WHERE ${parsedOptions.string.join(' AND ')};
     `;
-    else queryString = 'SELECT id, username, createdAt, updatedAt FROM users;';
+    else queryString = 'SELECT id, username, email, created_at FROM user;';
     const users = await executeQuery(queryString, parsedOptions.values);
     return [200, users];
   } catch (err) {
@@ -67,7 +66,7 @@ function post({ username, email, password }) {
     password: utils.createHash(password, salt)
   };
 
-  const queryString = `INSERT INTO users SET ?`;
+  const queryString = `INSERT INTO user SET ?`;
   return executeQuery(queryString, newUser);
 }
 
@@ -89,8 +88,8 @@ function validatePassword(attempted, password, salt) {
  */
 async function doDeleteUser(user_id) {
   try {
-    const sessionQueryString = `DELETE FROM sessions WHERE user_id = ${user_id};`;
-    const userQueryString = `DELETE FROM users WHERE id = ${user_id};`;
+    const sessionQueryString = `DELETE FROM session WHERE user_id = ${user_id};`;
+    const userQueryString = `DELETE FROM user WHERE id = ${user_id};`;
     await executeQuery(sessionQueryString);
     await executeQuery(userQueryString);
     return [200];
