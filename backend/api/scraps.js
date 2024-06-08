@@ -40,10 +40,10 @@ async function getManyByUserID(user_id, options) {
 async function post(user_id, { bucket_id, title, body, earthdate, earthtime, canon_status }) {
   try {
     if (bucket_id) {
-      const permissionLvl = (await executeQuery(`
+      const permissionsLvl = (await executeQuery(`
         SELECT * FROM user_bucket_permissions WHERE user_id = ${user_id} AND bucket_id = ${bucket_id};
-      `))[0]?.permissionLvl || 0;
-      if (permissionLvl < 3) return [403];
+      `))[0]?.permissions_lvl || 0;
+      if (permissionsLvl < 3) return [403];
     }
 
     const newEntry = {

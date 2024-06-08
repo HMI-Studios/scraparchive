@@ -75,7 +75,7 @@ async function post(user_id, { title, bucket_id }) {
 
   const newEntry = {
     title,
-    bucket_id,
+    bucket_id: bucket_id || undefined,
   };
   const queryString1 = `INSERT INTO bucket SET ?`;
   const insertData = await executeQuery(queryString1, newEntry);
@@ -83,7 +83,7 @@ async function post(user_id, { title, bucket_id }) {
   const newPermEntry = {
     user_id,
     bucket_id: insertData.insertId,
-    permissionLvl: 5,
+    permissions_lvl: 5,
   };
 
   const queryString2 = `INSERT INTO user_bucket_permissions SET ?`;
@@ -99,10 +99,10 @@ async function post(user_id, { title, bucket_id }) {
  async function putPermissions(user_id, entryData) {
   try {
 
-    const permissionLvl = (await executeQuery(`
+    const permissions_lvl = (await executeQuery(`
       SELECT * FROM user_bucket_permissions WHERE user_id = ${user_id} AND bucket_id = ${entryData.bucket_id};
-    `))[0]?.permissionLvl || 0;
-    if (permissionLvl !== 5) return [403];
+    `))[0]?.permissions_lvl || 0;
+    if (permissions_lvl !== 5) return [403];
 
     const oldEntry = (await executeQuery(`
       SELECT * FROM user_bucket_permissions WHERE user_id = ${entryData.user_id} AND bucket_id = ${entryData.bucket_id};
@@ -130,7 +130,7 @@ async function post(user_id, { title, bucket_id }) {
         const [status] = await putPermissions(user_id, {
           user_id: entryData.user_id,
           bucket_id: child.id,
-          permissionLvl: entryData.permissionLvl,
+          permissions_lvl: entryData.permissions_lvl,
           recursive: true,
         });
 
