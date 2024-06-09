@@ -10,6 +10,7 @@ CREATE TABLE user (
   salt VARCHAR(64),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  default_next VARCHAR(16),
   PRIMARY KEY (id)
 );
 

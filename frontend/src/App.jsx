@@ -98,10 +98,10 @@ class App extends React.Component {
                     <ScrapPile />
                   } />
                   <Route path={`${ADDR_PREFIX}/scratchpad`} element={
-                    <ScratchPad />
+                    <ScratchPad user={user} />
                   } />
                   <Route path={`${ADDR_PREFIX}/scratchpad/:scrapID`} element={
-                    <ScrapWrapper />
+                    <ScrapWrapper user={user} />
                   } />
                   <Route path={`${ADDR_PREFIX}/buckets`} element={
                     <BucketList />

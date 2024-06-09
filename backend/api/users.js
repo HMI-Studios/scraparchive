@@ -81,7 +81,25 @@ function post({ username, email, password }) {
  */
 function validatePassword(attempted, password, salt) {
   return utils.compareHash(attempted, password, salt);
-};
+}
+
+async function put(user_id, userIDToPut, changes) {
+  delete changes.username;
+  delete changes.email;
+  delete changes.password;
+  delete changes.id;
+  delete changes.salt;
+  delete changes.created_at;
+
+  if (Number(user_id) !== Number(userIDToPut)) return [403];
+
+  try {
+    return [200, await executeQuery(`UPDATE user SET ? WHERE id = ${userIDToPut};`, changes)];
+  } catch (err) {
+    console.error(err);
+    return [500];
+  }
+}
 
 /**
  * WARNING: THIS METHOD IS *UNSAFE* AND SHOULD *ONLY* BE CALLED BY AUTHORIZED ROUTES!
@@ -127,5 +145,6 @@ module.exports = {
   getMany,
   post,
   validatePassword,
+  put,
   del,
 };

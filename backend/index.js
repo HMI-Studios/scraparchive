@@ -74,6 +74,7 @@ const apiRoutes = new APIRoute('/api', {}, [
   new APIRoute('/users', { GET: () => api.users.getMany() }, [
     new APIRoute('/:id', {
       GET: (req) => api.users.getOne({ id: req.params.id }),
+      PUT: (req) => api.users.put(req.session.user.id, req.params.id, req.body),
       DELETE: api.users.del,
     }),
   ]),
@@ -82,7 +83,7 @@ const apiRoutes = new APIRoute('/api', {}, [
     POST: (req) => api.scraps.post(req.session.user.id, req.body),
   }, [
     new APIRoute('/next', {
-      GET: (req) => api.scraps.getPileWithSort(req.session.user.id, req.query.sort, req.query.limit ?? 100)
+      GET: (req) => api.scraps.getPileWithSort(req.session.user.id, req.query.sort ?? req.session.user.default_next, req.query.limit ?? 100)
     }),
     new APIRoute('/:id', {
       GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.id': req.params.id }), scraps => scraps[0]),

@@ -54,8 +54,10 @@ class ScratchPad extends React.Component {
   }
 
   async nextScrap({ next }) {
-    const { scrapID } = this.props;
-    const { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next?sort=${next || 'random'}&limit=2`);
+    const { scrapID, user } = this.props;
+    if (user.default_next && !next) user.default_next;
+    if (next && next !== user.default_next) await axios.put(`${window.ADDR_PREFIX}/api/users/${user.id}`, { default_next: next });
+    const { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next?sort=${next}&limit=2`);
     const [scrap, alt] = scraps;
     if (scrap && Number(scrap.id) !== Number(scrapID)) this.setState({ redirect: `/scratchpad/${scrap.id}` });
     else if (alt && Number(alt.id) !== Number(scrapID)) this.setState({ redirect: `/scratchpad/${alt.id}` });
@@ -130,10 +132,10 @@ class ScratchPad extends React.Component {
               next: 'select',
             }} dropdownOptions={{
               next: {
-                'random': 'Random (Default)',
-                'last_updated_asc': 'Least Recently Updated',
-                'last_updated_desc': 'Most Recently Updated',
+                'random': 'Random',
                 'least_info': 'Least Info',
+                'last_update_asc': 'Least Recently Updated',
+                'last_update_desc': 'Most Recently Updated',
               },
             }}/>
           </div>

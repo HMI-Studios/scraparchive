@@ -52,7 +52,7 @@ async function getPileWithSort(user_id, sort, limit) {
   sort = sort || 'random';
 
   if (sort === 'random') {
-    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'RAND()', limit);
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'RAND()', undefined, limit);
   } else if (sort === 'least_info') {
     [status, scraps] = await getManyByUserID(user_id, false, undefined, 'null_count DESC', `(
       ISNULL(scrap.bucket_id)
