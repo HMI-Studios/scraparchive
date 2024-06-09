@@ -63,7 +63,9 @@ function post({ username, email, password }) {
     username,
     email,
     salt,
-    password: utils.createHash(password, salt)
+    password: utils.createHash(password, salt),
+    created_at: new Date(),
+    updated_at: new Date(),
   };
 
   const queryString = `INSERT INTO user SET ?`;

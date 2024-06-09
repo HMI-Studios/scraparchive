@@ -37,6 +37,13 @@ const scrapColumns = [
     numeric: false,
     label: 'Written By',
   },
+  {
+    id: 'updated_at',
+    numeric: false,
+    isDate: true,
+    isTime: true,
+    label: 'Last Updated',
+  },
 ]
 
 class BucketList extends React.Component {
@@ -61,6 +68,8 @@ class BucketList extends React.Component {
     scraps = scraps.map(row => ({
       ...row,
       title: row.title || '[Untitled]',
+      created_at: row.created_at && new Date(row.created_at),
+      updated_at: row.updated_at && new Date(row.updated_at),
     }));
     this.setState({ buckets, scraps });
   }

@@ -13,6 +13,7 @@ async function getManyByUserID(user_id, includeBody, options) {
       SELECT
         scrap.id, scrap.author_id, scrap.bucket_id, scrap.title,
         scrap.earthdate, scrap.earthtime, scrap.canon_status,
+        scrap.created_at, scrap.updated_at,
         ${includeBody ? 'scrap.body,' : ''}
         user.username as author,
         bucket.title as bucket
@@ -43,7 +44,7 @@ async function getManyByUserID(user_id, includeBody, options) {
  * @returns 
  */
 async function getNextIDWithSort(user_id, sort) {
-  const [status, scraps] = getManyByUserID(user_id, false);
+  const [status, scraps] = await getManyByUserID(user_id, false);
   if (status !== 200) return [status];
 
   sort = sort ?? 'random';
@@ -75,7 +76,9 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
       body,
       earthdate: earthdate || undefined,
       earthtime: earthtime || undefined,
-      canon_status: canon_status || undefined
+      canon_status: canon_status || undefined,
+      created_at: new Date(),
+      updated_at: new Date(),
     };
 
     const queryString = `INSERT INTO scrap SET ?`;
@@ -102,7 +105,8 @@ async function put(user_id, scrap_id, { bucket_id, title, body, earthdate, earth
       body: body || undefined,
       earthdate: earthdate || undefined,
       earthtime: earthtime || undefined,
-      canon_status: canon_status || undefined
+      canon_status: canon_status || undefined,
+      updated_at: new Date(),
     };
 
     const queryString1 = `
@@ -130,6 +134,7 @@ async function put(user_id, scrap_id, { bucket_id, title, body, earthdate, earth
 
 module.exports = {
     getManyByUserID,
+    getNextIDWithSort,
     post,
     put,
   };

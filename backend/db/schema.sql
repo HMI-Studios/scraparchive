@@ -9,6 +9,7 @@ CREATE TABLE user (
   password VARCHAR(64),
   salt VARCHAR(64),
   created_at TIMESTAMP,
+  updated_at TIMESTAMP,
   PRIMARY KEY (id)
 );
 
@@ -16,6 +17,7 @@ CREATE TABLE session (
   id INT NOT NULL AUTO_INCREMENT,
   hash VARCHAR(64),
   user_id INT,
+  created_at TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES user (id),
   PRIMARY KEY (id)
 );
@@ -53,6 +55,8 @@ CREATE TABLE scrap (
   earthdate INT,
   earthtime TIME,
   canon_status TINYINT, /* 0 - not canon, 1 - headcanon, 2 - potential canon, 3 - mostly canon, 4 - canon draft, 5 - confirmed canon */
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
   FOREIGN KEY (author_id) REFERENCES user (id),
   FOREIGN KEY (bucket_id) REFERENCES bucket (id),
   PRIMARY KEY (id)

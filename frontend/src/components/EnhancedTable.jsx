@@ -56,7 +56,7 @@ class EnhancedTable extends React.Component {
     let value = row[column.id];
 
     if (column.isDate) {
-      return value ? value.toDateString() : 'Never';
+      return value ? (value.toDateString() + (column.isTime ? ` at ${value.getHours()}:${value.getMinutes()}` : '')) : 'Never';
     } else {
       return value;
     }

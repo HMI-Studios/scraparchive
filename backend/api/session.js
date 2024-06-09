@@ -26,7 +26,7 @@ function post() {
   const data = utils.createRandom32String();
   const hash = utils.createHash(data);
   const queryString = `INSERT INTO session SET ?`;
-  return executeQuery(queryString, { hash });
+  return executeQuery(queryString, { hash, created_at: new Date() });
 }
 
 /**

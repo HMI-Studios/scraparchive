@@ -81,12 +81,12 @@ const apiRoutes = new APIRoute('/api', {}, [
     GET: (req) => api.scraps.getManyByUserID(req.session.user.id, false),
     POST: (req) => api.scraps.post(req.session.user.id, req.body),
   }, [
+    new APIRoute('/next', {
+      GET: (req) => api.scraps.getNextIDWithSort(req.session.user.id, req.query.sort)
+    }),
     new APIRoute('/:id', {
       GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.id': req.params.id }), scraps => scraps[0]),
       PUT: (req) => api.scraps.put(req.session.user.id, req.params.id, req.body),
-    }),
-    new APIRoute('/next', {
-      GET: (req) => api.scraps.getNextIDWithSort(req.session.user.id, req.query.sort)
     }),
   ]),
   new APIRoute('/buckets', {
@@ -160,6 +160,7 @@ app.post(`${ADDR_PREFIX}/login`, async (req, res) => {
       const isValidUser = api.users.validatePassword(req.body.password, user.password, user.salt);
       if (isValidUser) {
         await api.session.put({ id: req.session.id }, { user_id: req.loginId });
+        db.queryAsync('UPDATE user SET updated_at = ? WHERE id = ?;', [new Date(), req.loginId]);
         res.sendStatus(200);
       } else {
         return res.sendStatus(401);
