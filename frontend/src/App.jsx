@@ -7,7 +7,7 @@ import Login from './views/Login.jsx';
 import Signup from './views/Signup.jsx';
 import Profile from './views/Profile.jsx';
 
-// import ScrapPile from './views/ScrapPile.jsx';
+import ScrapPile from './views/ScrapPile.jsx';
 import ScratchPad from './views/ScratchPad.jsx';
 import BucketList from './views/BucketList.jsx';
 import Bucket from './views/Bucket.jsx';
@@ -94,9 +94,9 @@ class App extends React.Component {
                   <Route path={`${ADDR_PREFIX}/signup`} element={
                     <Signup verifySession={this.verifySession} />
                   } />
-                  {/* <Route path={`${ADDR_PREFIX}/pile`} element={
+                  <Route path={`${ADDR_PREFIX}/pile`} element={
                     <ScrapPile />
-                  } /> */}
+                  } />
                   <Route path={`${ADDR_PREFIX}/scratchpad`} element={
                     <ScratchPad />
                   } />
