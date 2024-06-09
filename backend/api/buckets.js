@@ -10,14 +10,18 @@ async function getByUserID(user_id, options) {
     const parsedOptions = parseData(options);
     let queryString = `
       SELECT
-        bucket.*, parent.title AS parent_title
+        bucket.*,
+        parent.title AS parent_title,
+        COUNT(scrap.id) AS scrap_count
       FROM bucket
       INNER JOIN user_bucket_permissions AS perms ON perms.bucket_id = bucket.id
       LEFT JOIN bucket AS parent ON parent.id = bucket.bucket_id
+      LEFT JOIN scrap ON scrap.bucket_id = bucket.id
       WHERE
         perms.permissions_lvl >= 1
         AND perms.user_id = ${user_id}
-        ${options ? ` AND ${parsedOptions.string.join(' AND ')}` : ''};
+        ${options ? ` AND ${parsedOptions.string.join(' AND ')}` : ''}
+      GROUP BY bucket.id;
     `;
     const data = await executeQuery(queryString, parsedOptions.values);
     return [200, data];

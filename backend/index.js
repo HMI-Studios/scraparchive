@@ -78,11 +78,11 @@ const apiRoutes = new APIRoute('/api', {}, [
     }),
   ]),
   new APIRoute('/scraps', {
-    GET: (req) => api.scraps.getManyByUserID(req.session.user.id),
+    GET: (req) => api.scraps.getManyByUserID(req.session.user.id, false),
     POST: (req) => api.scraps.post(req.session.user.id, req.body),
   }, [
     new APIRoute('/:id', {
-      GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, { 'scrap.id': req.params.id }), scraps => scraps[0]),
+      GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.id': req.params.id }), scraps => scraps[0]),
       PUT: (req) => api.scraps.put(req.session.user.id, req.params.id, req.body),
     }),
   ]),
@@ -97,7 +97,7 @@ const apiRoutes = new APIRoute('/api', {}, [
       GET: (req) => api.buckets.getByID(req.session.user.id, req.params.bucketID),
     }, [
       new APIRoute('/scraps', {
-        GET: (req) => api.scraps.getManyByUserID(req.session.user.id, { 'scrap.bucket_id': req.params.bucketID }),
+        GET: (req) => api.scraps.getManyByUserID(req.session.user.id, false, { 'scrap.bucket_id': req.params.bucketID }),
       }),
       new APIRoute('/children', {
         GET: (req) => api.buckets.getByUserID(req.session.user.id, { 'bucket.bucket_id': req.params.bucketID }),

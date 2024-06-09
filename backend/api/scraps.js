@@ -6,12 +6,14 @@ const { executeQuery, parseData } = require('./util');
  * @param {*} options
  * @returns 
  */
-async function getManyByUserID(user_id, options) {
+async function getManyByUserID(user_id, includeBody, options) {
   try {
     const parsedOptions = parseData(options);
     let queryString = `
       SELECT
-        scrap.*,
+        scrap.id, scrap.author_id, scrap.bucket_id, scrap.title,
+        scrap.earthdate, scrap.earthtime, scrap.canon_status,
+        ${includeBody ? 'scrap.body,' : ''}
         user.username as author,
         bucket.title as bucket
       FROM scrap
