@@ -29,6 +29,16 @@ class ScratchPad extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, _) {
+    if (prevProps.scrapID !== this.props.scrapID) {
+      this.setState({ scrap: null, redirect: null });
+
+      if (this.props.scrapID) {
+        this.fetchScrap();
+      }
+    }
+  }
+
   async fetchData() {
     const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
     const buckets = {};
@@ -44,8 +54,12 @@ class ScratchPad extends React.Component {
   }
 
   async nextScrap({ next }) {
-    const { data: scrapID } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next?sort=${next}`);
-    this.setState({ redirect: `/scratchpad/${scrapID}` });
+    const { scrapID } = this.props;
+    const { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next?sort=${next || 'random'}&limit=2`);
+    const [scrap, alt] = scraps;
+    if (scrap && Number(scrap.id) !== Number(scrapID)) this.setState({ redirect: `/scratchpad/${scrap.id}` });
+    else if (alt && Number(alt.id) !== Number(scrapID)) this.setState({ redirect: `/scratchpad/${alt.id}` });
+    // else TODO error?
   }
 
   submitEntry(data) {
@@ -116,10 +130,10 @@ class ScratchPad extends React.Component {
               next: 'select',
             }} dropdownOptions={{
               next: {
-                // 'last_updated_asc': 'Least Recently Updated',
-                // 'last_updated_desc': 'Most Recently Updated',
-                // 'least_info': 'Least Info',
-                'random': 'Random',
+                'random': 'Random (Default)',
+                'last_updated_asc': 'Least Recently Updated',
+                'last_updated_desc': 'Most Recently Updated',
+                'least_info': 'Least Info',
               },
             }}/>
           </div>

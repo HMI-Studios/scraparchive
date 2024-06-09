@@ -6,7 +6,7 @@ const { executeQuery, parseData } = require('./util');
  * @param {*} options
  * @returns 
  */
-async function getManyByUserID(user_id, includeBody, options) {
+async function getManyByUserID(user_id, includeBody, options, orderClause, extraSelect, limit) {
   try {
     const parsedOptions = parseData(options);
     let queryString = `
@@ -17,6 +17,7 @@ async function getManyByUserID(user_id, includeBody, options) {
         ${includeBody ? 'scrap.body,' : ''}
         user.username as author,
         bucket.title as bucket
+        ${extraSelect ? `, ${extraSelect}` : ''}
       FROM scrap
       INNER JOIN user ON user.id = scrap.author_id
       LEFT JOIN bucket ON scrap.bucket_id = bucket.id
@@ -27,7 +28,9 @@ async function getManyByUserID(user_id, includeBody, options) {
           OR 
           (scrap.bucket_id is NULL AND scrap.author_id = ${user_id})
         )
-        ${options ? ` AND ${parsedOptions.string.join(' AND ')}` : ''};
+        ${options ? ` AND ${parsedOptions.string.join(' AND ')}` : ''}
+      ${orderClause ? `ORDER BY ${orderClause}` : ''}
+      ${limit ? `LIMIT ${limit}` : ''};
     `;
     const scraps = await executeQuery(queryString, parsedOptions.values);
     return [200, scraps];
@@ -43,15 +46,25 @@ async function getManyByUserID(user_id, includeBody, options) {
  * @param {string} sort method to use to sort scraps
  * @returns 
  */
-async function getNextIDWithSort(user_id, sort) {
-  const [status, scraps] = await getManyByUserID(user_id, false);
-  if (status !== 200) return [status];
+async function getPileWithSort(user_id, sort, limit) {
+  let status, scraps;
 
-  sort = sort ?? 'random';
+  sort = sort || 'random';
 
   if (sort === 'random') {
-    return [status, scraps.sort(() => Math.random() * 2 - 1)];
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'RAND()', limit);
+  } else if (sort === 'least_info') {
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'null_count DESC', `(
+      ISNULL(scrap.bucket_id)
+      + ISNULL(scrap.title)
+      + ISNULL(scrap.earthdate)
+      + ISNULL(scrap.earthtime)
+      + ISNULL(scrap.canon_status)
+    ) AS null_count`, limit);
   }
+  
+  if (status !== 200) return [status];
+  return [status, scraps];
 }
 
 /**
@@ -134,7 +147,7 @@ async function put(user_id, scrap_id, { bucket_id, title, body, earthdate, earth
 
 module.exports = {
     getManyByUserID,
-    getNextIDWithSort,
+    getPileWithSort,
     post,
     put,
   };
