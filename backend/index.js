@@ -85,6 +85,9 @@ const apiRoutes = new APIRoute('/api', {}, [
       GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.id': req.params.id }), scraps => scraps[0]),
       PUT: (req) => api.scraps.put(req.session.user.id, req.params.id, req.body),
     }),
+    new APIRoute('/next', {
+      GET: (req) => api.scraps.getNextIDWithSort(req.session.user.id, req.query.sort)
+    }),
   ]),
   new APIRoute('/buckets', {
     GET: (req) => api.buckets.getByUserID(req.session.user.id),

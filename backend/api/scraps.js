@@ -39,6 +39,23 @@ async function getManyByUserID(user_id, includeBody, options) {
 /**
  * 
  * @param {number} user_id the id of the current user
+ * @param {string} sort method to use to sort scraps
+ * @returns 
+ */
+async function getNextIDWithSort(user_id, sort) {
+  const [status, scraps] = getManyByUserID(user_id, false);
+  if (status !== 200) return [status];
+
+  sort = sort ?? 'random';
+
+  if (sort === 'random') {
+    return [status, scraps.sort(() => Math.random() * 2 - 1)];
+  }
+}
+
+/**
+ * 
+ * @param {number} user_id the id of the current user
  * @param {*} entryData
  * @returns 
  */

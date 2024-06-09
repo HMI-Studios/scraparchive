@@ -17,6 +17,7 @@ class ScratchPad extends React.Component {
     };
     this.fetchData = this.fetchData.bind(this);
     this.fetchScrap = this.fetchScrap.bind(this);
+    this.nextScrap = this.nextScrap.bind(this);
     this.submitEntry = this.submitEntry.bind(this);
   }
 
@@ -30,7 +31,6 @@ class ScratchPad extends React.Component {
 
   async fetchData() {
     const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
-    console.log(data);
     const buckets = {};
     data.map(bucket => {
       buckets[bucket.id] = bucket.title;
@@ -40,12 +40,12 @@ class ScratchPad extends React.Component {
 
   async fetchScrap() {
     const { data: scrap } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/${this.props.scrapID}`);
-    console.log('SCRAP', scrap);
-    // const buckets = {};
-    // data.map(bucket => {
-    //   buckets[bucket.id] = bucket.title;
-    // })
     this.setState({ scrap, body: scrap.body });
+  }
+
+  async nextScrap({ next }) {
+    const { data: scrapID } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next?sort=${next}`);
+    this.setState({ redirect: `/scratchpad/${scrapID}` });
   }
 
   submitEntry(data) {
@@ -107,6 +107,19 @@ class ScratchPad extends React.Component {
                 3: 'Mostly Canon',
                 4: 'Canon Draft',
                 5: 'Confirmed Canon',
+              },
+            }}/>
+            <hr style={{ width: '100%' }} />
+            <InputForm submitFn={this.nextScrap} submitText={'Next'} fields={{
+              next: 'Next scrap in pile',
+            }} types={{
+              next: 'select',
+            }} dropdownOptions={{
+              next: {
+                // 'last_updated_asc': 'Least Recently Updated',
+                // 'last_updated_desc': 'Most Recently Updated',
+                // 'least_info': 'Least Info',
+                'random': 'Random',
               },
             }}/>
           </div>
