@@ -75,7 +75,7 @@ class App extends React.Component {
               {verifying ? null : (
                 <Routes>
                   <Route path={`${ADDR_PREFIX}`} element={
-                    <Navigate to="home" />
+                    <Navigate to="pile" />
                   } />
                   <Route path={`${ADDR_PREFIX}/home/*`} element={
                     <Home />
