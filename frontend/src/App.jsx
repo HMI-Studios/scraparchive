@@ -95,7 +95,7 @@ class App extends React.Component {
                     <Signup verifySession={this.verifySession} />
                   } />
                   <Route path={`${ADDR_PREFIX}/pile`} element={
-                    <ScrapPile />
+                    <ScrapPile user={user} />
                   } />
                   <Route path={`${ADDR_PREFIX}/scratchpad`} element={
                     <ScratchPad user={user} />

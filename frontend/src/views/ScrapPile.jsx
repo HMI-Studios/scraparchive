@@ -55,7 +55,7 @@ class BucketList extends React.Component {
       showEntryForm: false,
     };
     this.fetchData = this.fetchData.bind(this);
-    this.submitEntry = this.submitEntry.bind(this);
+    this.updateSort = this.updateSort.bind(this);
   }
 
   componentDidMount() {
@@ -64,7 +64,7 @@ class BucketList extends React.Component {
 
   async fetchData() {
     let { data: buckets } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
-    let { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps`);
+    let { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next`);
     scraps = scraps.map(row => ({
       ...row,
       title: row.title || '[Untitled]',
@@ -74,8 +74,9 @@ class BucketList extends React.Component {
     this.setState({ buckets, scraps });
   }
 
-  submitEntry(data) {
-    axios.post(`${window.ADDR_PREFIX}/api/buckets`, data)
+  updateSort({ next }) {
+    const { user } = this.props;
+    axios.put(`${window.ADDR_PREFIX}/api/users/${user.id}`, { default_next: next })
     .then(() => {
       this.fetchData();
     })
@@ -88,20 +89,24 @@ class BucketList extends React.Component {
       <>
         <PageTitle title={'Scrap Pile'} />
         <div className="stack">
-          {/* <TextBtn onClick={() => this.setState({ showEntryForm: !showEntryForm })}>New Bucket</TextBtn>
+          <TextBtn onClick={() => this.setState({ showEntryForm: !showEntryForm })}>Update Sort Order</TextBtn>
           {showEntryForm && (
-            <InputForm submitFn={this.submitEntry} fields={{
-              title: 'Title',
-              bucket_id: 'Parent Bucket',
+            <InputForm submitFn={this.updateSort} submitText={'Update'} fields={{
+              next: 'Sort Order',
             }} required={{
-              title: true,
+              next: true,
             }} types={{
-              bucket_id: 'dynamicselect',
-            }} dynamicDropdownOptions={{
-              bucket_id: () => buckets.map(row => ({ value: row.id, label: row.title })),
+              next: 'select',
+            }} dropdownOptions={{
+              next: {
+                'random': 'Random',
+                'least_info': 'Least Info',
+                'last_update_asc': 'Least Recently Updated',
+                'last_update_desc': 'Most Recently Updated',
+              },
             }} />
-          )} */}
-          <EnhancedTable refresh={this.fetchData} columns={scrapColumns} rows={scraps} defaultSort={'title'} links={{
+          )}
+          <EnhancedTable refresh={this.fetchData} columns={scrapColumns} rows={scraps} links={{
             title: (row) => (`/scratchpad/${row.id}`)
           }} />
         </div>
