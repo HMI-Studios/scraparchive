@@ -61,7 +61,11 @@ async function getPileWithSort(user_id, sort, limit) {
       + ISNULL(scrap.earthtime)
       + ISNULL(scrap.canon_status)
     ) AS null_count`, limit);
-  }
+  } else if (sort === 'last_update_desc') {
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'scrap.updated_at DESC', undefined, limit);
+  } else if (sort === 'last_update_asc') {
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'scrap.updated_at ASC', undefined, limit);
+  } else return [400];
   
   if (status !== 200) return [status];
   return [status, scraps];
