@@ -83,7 +83,9 @@ class ScratchPad extends React.Component {
         body,
       })
       .then(({ data }) => {
-        this.setState({ redirect: `/scratchpad/${data.insertId}` });
+        this.setState({ scrap: null, body: '\t' });
+        this.fetchData();
+        // this.setState({ redirect: `/scratchpad/${data.insertId}` });
       })
     }
   }

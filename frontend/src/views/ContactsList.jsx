@@ -12,6 +12,7 @@ class ContactsList extends React.Component {
     super(props);
     this.state = {
       contacts: [],
+      pending: [],
       showContactForm: false,
     };
     this.submitContact = this.submitContact.bind(this);
@@ -25,7 +26,8 @@ class ContactsList extends React.Component {
 
   async fetchData() {
     let { data: contacts } = await axios.get(`${window.ADDR_PREFIX}/api/contacts`);
-    this.setState({ contacts });
+    let { data: pending } = await axios.get(`${window.ADDR_PREFIX}/api/contacts/pending`);
+    this.setState({ contacts, pending });
   }
 
   async submitContact({ email }) {
@@ -45,19 +47,15 @@ class ContactsList extends React.Component {
 
   render() {
     const { user,setView } = this.props;
-    const { contacts, showContactForm } = this.state;
+    const { contacts, pending, showContactForm } = this.state;
 
     const refreshBtn = (
       <TextBtn onClick={() => this.fetchData()}>Refresh</TextBtn>
     );
 
-    const contactCount = user && contacts && contacts.reduce((acc, contact) => (
-      acc + ((contact.accepted === 1) ? 1 : 0)
-    ), 0);
+    const contactCount = user && contacts && contacts.length;
 
-    const incomingRequestCount = user && contacts && contacts.reduce((acc, contact) => (
-      acc + ((contact.contact_id === user.id && contact.accepted === 0) ? 1 : 0)
-    ), 0);
+    const incomingRequestCount = user && pending && pending.length;
 
     const tabs = {
       all: {
@@ -65,7 +63,7 @@ class ContactsList extends React.Component {
         content: (
           <>
             {refreshBtn}
-            {user && contacts && contacts.filter(contact => contact.accepted === 1).map(contact => {
+            {user && contacts && contacts.map(contact => {
               if (contact.user_id === user.id) {
                 return (
                   <div key={contact.contact_email} className="contactTile">
@@ -92,7 +90,7 @@ class ContactsList extends React.Component {
         content: (
           <>
             {refreshBtn}
-            {user && contacts && contacts.filter(contact => contact.accepted === 0).map(contact => {
+            {user && pending && pending.map(contact => {
               if (contact.user_id === user.id) {
                 return (
                   <div key={contact.contact_email} className="contactTile">

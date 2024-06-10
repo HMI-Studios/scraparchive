@@ -6,7 +6,7 @@ const md5 = require('md5');
  * @param {number} user_id the id of the current user
  * @returns 
  */
-async function getByUserID(user_id) {
+async function getByUserID(user_id, isAccepted=true) {
   try {
     const queryString = `
       SELECT
@@ -18,7 +18,7 @@ async function getByUserID(user_id) {
       FROM contact
       INNER JOIN user as u ON contact.user_id = u.id
       INNER JOIN user as c ON contact.contact_id = c.id
-      WHERE u.id = ${user_id} OR c.id = ${user_id};
+      WHERE (u.id = ${user_id} OR c.id = ${user_id}) AND contact.accepted = ${Number(isAccepted)};
     `;
     const contats = (await executeQuery(queryString)).map(contact => {
       if (contact.user_id === user_id) {

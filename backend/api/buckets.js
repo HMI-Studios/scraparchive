@@ -91,7 +91,7 @@ async function post(user_id, { title, bucket_id }) {
   };
 
   const queryString2 = `INSERT INTO user_bucket_permissions SET ?`;
-  return [201, [insertData, executeQuery(queryString2, newPermEntry)]];
+  return [201, [insertData, await executeQuery(queryString2, newPermEntry)]];
 }
 
 /**

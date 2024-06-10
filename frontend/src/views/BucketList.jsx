@@ -47,10 +47,33 @@ class BucketList extends React.Component {
     this.setState({ buckets });
   }
 
-  submitEntry(data) {
-    axios.post(`${window.ADDR_PREFIX}/api/buckets`, data)
-    .then(() => {
-      this.fetchData();
+  submitEntry({ title, bucket_id, copyParent }) {
+    const entry = {
+      title,
+      bucket_id,
+    };
+    axios.post(`${window.ADDR_PREFIX}/api/buckets`, entry)
+    .then(({ data }) => {
+      const newID = data[0].insertId;
+      if (newID && copyParent) {
+        axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucket_id}`)
+        .then(({ data: bucket }) => {
+          console.log(bucket)
+          for (const row of bucket.perms) {
+            axios.put(`${window.ADDR_PREFIX}/api/buckets/permissions`, {
+              user_id: row.user_id,
+              bucket_id: newID,
+              permissions_lvl: row.permissions_lvl,
+              recursive: false,
+            });
+          }
+        })
+        .then(() => {
+          this.fetchData();
+        })
+      } else {
+        this.fetchData();
+      }
     })
   }
 
@@ -73,12 +96,19 @@ class BucketList extends React.Component {
             <InputForm submitFn={this.submitEntry} fields={{
               title: 'Title',
               bucket_id: 'Parent Bucket',
+              copyParent: 'Copy parent permissions',
             }} required={{
               title: true,
             }} types={{
               bucket_id: 'dynamicselect',
+              copyParent: 'select',
             }} dynamicDropdownOptions={{
               bucket_id: () => buckets.map(row => ({ value: row.id, label: row.title })),
+            }} dropdownOptions={{
+              copyParent: {
+                1: 'Yes',
+                0: 'No',
+              },
             }} />
           )}
         </div>

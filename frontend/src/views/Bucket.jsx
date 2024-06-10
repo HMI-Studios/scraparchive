@@ -122,7 +122,7 @@ class Bucket extends React.Component {
         3: 'Write Access',
         4: 'Write/Delete',
         5: 'Admin',
-      }[row.permissionLvl],
+      }[row.permissions_lvl],
     }));
     this.setState({ bucket });
   }
@@ -166,12 +166,12 @@ class Bucket extends React.Component {
     this.setState({ editMode: !editMode });
   }
 
-  async changeUserPermissions({ user_id, permissionLvl, recursive }) {
+  async changeUserPermissions({ user_id, permissions_lvl, recursive }) {
     const { bucketID } = this.props;
     await axios.put(`${window.ADDR_PREFIX}/api/buckets/permissions`, {
       user_id,
       bucket_id: bucketID,
-      permissionLvl,
+      permissions_lvl,
       recursive,
     });
     this.fetchBucket();
@@ -238,18 +238,18 @@ class Bucket extends React.Component {
             {showEntryForm && (
               <InputForm submitFn={this.changeUserPermissions} fields={{
                 user_id: 'User',
-                permissionLvl: 'Permission Level',
+                permissions_lvl: 'Permission Level',
                 recursive: 'Apply to all children',
               }} required={{
                 user_id: true,
-                permissionLvl: true,
+                permissions_lvl: true,
               }} types={{
                 user_id: 'select',
-                permissionLvl: 'select',
+                permissions_lvl: 'select',
                 recursive: 'select',
               }} dropdownOptions={{
                 user_id: contacts,
-                permissionLvl: {
+                permissions_lvl: {
                   0: 'No Access',
                   1: 'Read Access',
                   2: 'Read/Comment',
