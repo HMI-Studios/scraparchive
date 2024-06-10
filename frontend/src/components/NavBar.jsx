@@ -9,7 +9,7 @@ const NavBar = ({ setView, user }) => (
     <div className="navMenu left">
       <Link
         className="logoText"
-        to={`${window.ADDR_PREFIX}/home`}
+        to={`${window.ADDR_PREFIX}`}
       >
         Scrapbook
       </Link>
