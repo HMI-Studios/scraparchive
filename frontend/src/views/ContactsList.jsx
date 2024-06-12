@@ -67,17 +67,21 @@ class ContactsList extends React.Component {
               if (contact.user_id === user.id) {
                 return (
                   <div key={contact.contact_email} className="contactTile">
-                    <img src={contact.gravatar_link + '?s=64'} />
-                    <h2>{contact.contact_name}</h2>
-                    <span>{contact.contact_email}</span>
+                      <img src={contact.gravatar_link + '?s=64'} />
+                    <div className="contactTile inner">
+                      <h2 style={{ 'margin': 0 }}>{contact.contact_name}</h2>
+                      <span>{contact.contact_email}</span>
+                    </div>
                   </div>
                 );
               } else {
                 return (
                   <div key={contact.user_email} className="contactTile">
                     <img src={contact.gravatar_link + '?s=64'} />
-                    <h2>{contact.user_name}</h2>
-                    <span>{contact.user_email}</span>
+                    <div className="contactTile inner">
+                      <h2 style={{ 'margin': 0 }}>{contact.user_name}</h2>
+                      <span>{contact.user_email}</span>
+                    </div>
                   </div>
                 );
               }
@@ -95,19 +99,23 @@ class ContactsList extends React.Component {
                 return (
                   <div key={contact.contact_email} className="contactTile">
                     <img src={contact.gravatar_link + '?s=64'} />
-                    <h2>{contact.contact_name}</h2>
-                    <span>{contact.contact_email}</span>
-                    <span style={{'marginLeft': 'auto'}}>Pending</span>
+                    <div className="contactTile inner">
+                      <h2 style={{ 'margin': 0 }}>{contact.contact_name}</h2>
+                      <span>{contact.contact_email}</span>
+                      <span style={{ flexGrow: 1, textAlign: 'end' }}>Pending</span>
+                    </div>
                   </div>
                 );
               } else {
                 return (
                   <div key={contact.user_email} className="contactTile">
                     <img src={contact.gravatar_link + '?s=64'} />
-                    <h2>{contact.user_name}</h2>
-                    <span>{contact.user_email}</span>
-                    <SolidBtn style={{'marginLeft': 'auto'}} onClick={() => this.acceptContact(contact.user_id)}>Accept</SolidBtn>
-                    <SolidBtn className="errorBtn" onClick={() => this.rejectContact(contact.user_id)}>Reject</SolidBtn>
+                    <div className="contactTile inner">
+                      <h2 style={{ 'margin': 0 }}>{contact.user_name}</h2>
+                      <span>{contact.user_email}</span>
+                      <SolidBtn style={{'marginLeft': 'auto'}} onClick={() => this.acceptContact(contact.user_id)}>Accept</SolidBtn>
+                      <SolidBtn className="errorBtn" onClick={() => this.rejectContact(contact.user_id)}>Reject</SolidBtn>
+                    </div>
                   </div>
                 );
               }

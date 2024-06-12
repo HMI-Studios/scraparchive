@@ -43,7 +43,7 @@ class ScratchPad extends React.Component {
     const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
     const buckets = {};
     data.map(bucket => {
-      buckets[bucket.id] = bucket.title;
+      buckets[bucket.id] = bucket.title + (bucket.parent_title ? ` (${bucket.parent_title})` : '');
     })
     this.setState({ buckets });
   }
