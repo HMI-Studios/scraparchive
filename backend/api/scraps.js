@@ -6,7 +6,7 @@ const { executeQuery, parseData } = require('./util');
  * @param {*} options
  * @returns 
  */
-async function getManyByUserID(user_id, includeBody, options, orderClause, extraSelect, limit) {
+async function getManyByUserID(user_id, includeBody, options, orderClause, extraSelect, limit, perms_lvl=1) {
   try {
     const parsedOptions = parseData(options);
     let queryString = `
@@ -24,7 +24,7 @@ async function getManyByUserID(user_id, includeBody, options, orderClause, extra
       LEFT JOIN user_bucket_permissions as perms ON bucket.id = perms.bucket_id
       WHERE
         (
-          (perms.permissions_lvl >= 1 AND perms.user_id = ${user_id})
+          (perms.permissions_lvl >= ${perms_lvl} AND perms.user_id = ${user_id})
           OR 
           (scrap.bucket_id is NULL AND scrap.author_id = ${user_id})
         )
@@ -43,16 +43,18 @@ async function getManyByUserID(user_id, includeBody, options, orderClause, extra
 /**
  * 
  * @param {number} user_id the id of the current user
+ * @param {number} perms_lvl minimum perms level needed to fetch scrap
  * @param {string} sort method to use to sort scraps
+ * @param {number} limit max amount of scraps to return
  * @returns 
  */
-async function getPileWithSort(user_id, sort, limit) {
+async function getPileWithSort(user_id, sort, limit, perms_lvl) {
   let status, scraps;
 
   sort = sort || 'random';
 
   if (sort === 'random') {
-    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'RAND()', undefined, limit);
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'RAND()', undefined, limit, perms_lvl);
   } else if (sort === 'least_info') {
     [status, scraps] = await getManyByUserID(user_id, false, undefined, 'null_count DESC', `(
       ISNULL(scrap.bucket_id)
@@ -60,11 +62,11 @@ async function getPileWithSort(user_id, sort, limit) {
       + ISNULL(scrap.earthdate)
       + ISNULL(scrap.earthtime)
       + ISNULL(scrap.canon_status)
-    ) AS null_count`, limit);
+    ) AS null_count`, limit, perms_lvl);
   } else if (sort === 'last_update_desc') {
-    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'scrap.updated_at DESC', undefined, limit);
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'scrap.updated_at DESC', undefined, limit, perms_lvl);
   } else if (sort === 'last_update_asc') {
-    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'scrap.updated_at ASC', undefined, limit);
+    [status, scraps] = await getManyByUserID(user_id, false, undefined, 'scrap.updated_at ASC', undefined, limit, perms_lvl);
   } else return [400];
   
   if (status !== 200) return [status];
