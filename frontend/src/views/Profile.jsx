@@ -20,7 +20,7 @@ class Profile extends React.Component {
   }
 
   logout() {
-    axios.post(`${window.ADDR_PREFIX}/logout`)
+    axios.post(`${window.API_URL}/logout`)
     .then(() => {
       this.props.verifySession();
     })
@@ -39,12 +39,12 @@ class Profile extends React.Component {
 
       const { enteredPassword } = this.state;
       const basePath = window.location.pathname;
-      const isCorrectPass = (await axios.post(`${window.ADDR_PREFIX}/authorize`, {
+      const isCorrectPass = (await axios.post(`${window.API_URL}/authorize`, {
         email: user.email,
         password: enteredPassword,
       }).catch(res => res)).status === 200;
       if (isCorrectPass) {
-        await axios.delete(`${window.ADDR_PREFIX}/api/users/${user.id}`, { data: {
+        await axios.delete(`${window.API_URL}/api/users/${user.id}`, { data: {
           email: user.email,
           password: enteredPassword,
         }});

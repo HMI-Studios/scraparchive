@@ -108,7 +108,7 @@ class Bucket extends React.Component {
 
   async fetchBucketScraps() {
     const { bucketUUID } = this.props;
-    const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketUUID}/scraps`);
+    const { data } = await axios.get(`${window.API_URL}/api/buckets/${bucketUUID}/scraps`);
     const { bucket, scraps } = data;
     bucket.perms = bucket.perms.map(row => ({
       ...row,
@@ -127,7 +127,7 @@ class Bucket extends React.Component {
 
   async fetchChildBuckets() {
     const { bucketUUID } = this.props;
-    const { data: children } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketUUID}/children`)
+    const { data: children } = await axios.get(`${window.API_URL}/api/buckets/${bucketUUID}/children`)
     console.log(children)
     // const income = data.map(row => ({...row, posted_on: new Date(row.posted_on)}));
     this.setState({ children });
@@ -137,7 +137,7 @@ class Bucket extends React.Component {
     const { user } = this.props;
     if (user) {
       const contacts = {};
-      const { data } = await axios.get(`${window.ADDR_PREFIX}/api/contacts`);
+      const { data } = await axios.get(`${window.API_URL}/api/contacts`);
       data.map(contact => {
         if (contact.user_id === user.id) contacts[contact.contact_id] = contact.contact_name;
         else contacts[contact.user_id] = contact.user_name; 
@@ -154,7 +154,7 @@ class Bucket extends React.Component {
 
   async changeUserPermissions({ user_id, permissions_lvl, recursive }) {
     const { bucketUUID } = this.props;
-    await axios.put(`${window.ADDR_PREFIX}/api/buckets/permissions`, {
+    await axios.put(`${window.API_URL}/api/buckets/permissions`, {
       user_id,
       bucket_id: bucketUUID,
       permissions_lvl,

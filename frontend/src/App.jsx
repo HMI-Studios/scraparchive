@@ -35,7 +35,7 @@ class App extends React.Component {
   }
 
   async verifySession() {
-    await axios.get(`${window.ADDR_PREFIX}/verify`)
+    await axios.get(`${window.API_URL}/verify`)
     .then(({ data }) => {
       this.setState({ user: data, verifying: false });
     })

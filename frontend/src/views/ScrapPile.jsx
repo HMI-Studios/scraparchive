@@ -63,8 +63,8 @@ class BucketList extends React.Component {
   }
 
   async fetchData() {
-    let { data: buckets } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
-    let { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next`);
+    let { data: buckets } = await axios.get(`${window.API_URL}/api/buckets`);
+    let { data: scraps } = await axios.get(`${window.API_URL}/api/scraps/next`);
     scraps = scraps.map(row => ({
       ...row,
       title: row.title || '[Untitled]',
@@ -76,7 +76,7 @@ class BucketList extends React.Component {
 
   updateSort({ next }) {
     const { user } = this.props;
-    axios.put(`${window.ADDR_PREFIX}/api/users/${user.id}`, { default_next: next })
+    axios.put(`${window.API_URL}/api/users/${user.id}`, { default_next: next })
     .then(() => {
       this.fetchData();
     })

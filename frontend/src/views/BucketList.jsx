@@ -40,7 +40,7 @@ class BucketList extends React.Component {
   }
 
   async fetchData() {
-    let { data: buckets } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
+    let { data: buckets } = await axios.get(`${window.API_URL}/api/buckets`);
     buckets = buckets.map(row => ({
       ...row,
     }));
@@ -52,15 +52,15 @@ class BucketList extends React.Component {
       title,
       bucket_id,
     };
-    axios.post(`${window.ADDR_PREFIX}/api/buckets`, entry)
+    axios.post(`${window.API_URL}/api/buckets`, entry)
     .then(({ data }) => {
       const newID = data[0].insertId;
       if (newID && copyParent) {
-        axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucket_id}`)
+        axios.get(`${window.API_URL}/api/buckets/${bucket_id}`)
         .then(({ data: bucket }) => {
           console.log(bucket)
           for (const row of bucket.perms) {
-            axios.put(`${window.ADDR_PREFIX}/api/buckets/permissions`, {
+            axios.put(`${window.API_URL}/api/buckets/permissions`, {
               user_id: row.user_id,
               bucket_id: newID,
               permissions_lvl: row.permissions_lvl,

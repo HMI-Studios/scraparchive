@@ -40,7 +40,7 @@ class ScratchPad extends React.Component {
   }
 
   async fetchData() {
-    const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets`);
+    const { data } = await axios.get(`${window.API_URL}/api/buckets`);
     const buckets = {};
     data.map(bucket => {
       buckets[bucket.id] = bucket.title + (bucket.parent_title ? ` (${bucket.parent_title})` : '');
@@ -49,15 +49,15 @@ class ScratchPad extends React.Component {
   }
 
   async fetchScrap() {
-    const { data: scrap } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/${this.props.scrapUUID}`);
+    const { data: scrap } = await axios.get(`${window.API_URL}/api/scraps/${this.props.scrapUUID}`);
     this.setState({ scrap, body: scrap.body });
   }
 
   async nextScrap({ next }) {
     const { scrapUUID, user } = this.props;
     if (user.default_next && !next) user.default_next;
-    if (next && next !== user.default_next) await axios.put(`${window.ADDR_PREFIX}/api/users/${user.id}`, { default_next: next });
-    const { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next?sort=${next}&limit=2`);
+    if (next && next !== user.default_next) await axios.put(`${window.API_URL}/api/users/${user.id}`, { default_next: next });
+    const { data: scraps } = await axios.get(`${window.API_URL}/api/scraps/next?sort=${next}&limit=2`);
     const [scrap, alt] = scraps;
     if (scrap && scrap.uuid !== scrapUUID) this.setState({ redirect: `/scratchpad/${scrap.uuid}` });
     else if (alt && alt.uuid !== scrapUUID) this.setState({ redirect: `/scratchpad/${alt.uuid}` });
@@ -68,7 +68,7 @@ class ScratchPad extends React.Component {
     const { scrapUUID } = this.props;
     const { body } = this.state;
     if (scrapUUID) {
-      axios.put(`${window.ADDR_PREFIX}/api/scraps/${scrapUUID}`, {
+      axios.put(`${window.API_URL}/api/scraps/${scrapUUID}`, {
         ...data,
         body,
       })
@@ -78,7 +78,7 @@ class ScratchPad extends React.Component {
         this.fetchScrap();
       })
     } else {
-      axios.post(`${window.ADDR_PREFIX}/api/scraps`, {
+      axios.post(`${window.API_URL}/api/scraps`, {
         ...data,
         body,
       })

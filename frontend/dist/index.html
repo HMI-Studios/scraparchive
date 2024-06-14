@@ -11,8 +11,8 @@
         <body>
         <div id="app"></div>
         <script>
-            const path = location.pathname;
-            window.ADDR_PREFIX = path.substring(0, path.length - Number(path[path.length-1] === '/'));
+            window.ADDR_PREFIX = '/scraparchive';
+            window.API_URL = 'https://hmi.dynu.net/scraparchive';
         </script>
         <script src="bundle.js"></script>
         <!-- Start Single Page Apps for GitHub Pages -->

@@ -25,23 +25,23 @@ class ContactsList extends React.Component {
   }
 
   async fetchData() {
-    let { data: contacts } = await axios.get(`${window.ADDR_PREFIX}/api/contacts`);
-    let { data: pending } = await axios.get(`${window.ADDR_PREFIX}/api/contacts/pending`);
+    let { data: contacts } = await axios.get(`${window.API_URL}/api/contacts`);
+    let { data: pending } = await axios.get(`${window.API_URL}/api/contacts/pending`);
     this.setState({ contacts, pending });
   }
 
   async submitContact({ email }) {
-    await axios.post(`${window.ADDR_PREFIX}/api/contacts`, { email });
+    await axios.post(`${window.API_URL}/api/contacts`, { email });
     this.fetchData();
   }
 
   async acceptContact(contactId) {
-    await axios.put(`${window.ADDR_PREFIX}/api/contacts/${contactId}`);
+    await axios.put(`${window.API_URL}/api/contacts/${contactId}`);
     this.fetchData();
   }
 
   async rejectContact(contactId) {
-    await axios.delete(`${window.ADDR_PREFIX}/api/contacts/${contactId}`);
+    await axios.delete(`${window.API_URL}/api/contacts/${contactId}`);
     this.fetchData();
   }
 
