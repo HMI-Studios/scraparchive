@@ -14,6 +14,7 @@ import Bucket from './views/Bucket.jsx';
 import ContactsList from './views/ContactsList.jsx';
 
 import NavBar from './components/NavBar.jsx';
+import Modal from './components/Modal.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class App extends React.Component {
       darkMode: false,
       verifying: true,
       user: null,
+      serverDown: false,
     };
 
     this.setDarkMode = this.setDarkMode.bind(this);
@@ -42,6 +44,8 @@ class App extends React.Component {
     .catch(({ response }) => {
       if (response.status === 401) {
         this.setState({ user: null, verifying: false });
+      } else if (response.status === 504) {
+        this.setState({ serverDown: true });
       } else {
         console.error(response);
       }
@@ -53,7 +57,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { view, darkMode, user, verifying, viewData } = this.state;
+    const { darkMode, user, verifying, serverDown } = this.state;
     const ADDR_PREFIX = window.ADDR_PREFIX;
 
     const ScrapWrapper = (props) => {
@@ -71,6 +75,18 @@ class App extends React.Component {
         <div className="page">
           <Router>
             <NavBar user={user} />
+            {serverDown && (
+              <Modal>
+                <div className="stack centered">
+                  <h2>Unable to Connect to Server</h2>
+                  <p>We're having trouble connecting to the server right now. This might be due to a temporary network issue or server maintenance.</p>
+                  <p>If the problem does not resolve itself in a few minutes, please let us know at <a href="mailto:contact@hmistudios.com">contact@hmistudios.com</a>.</p>
+                  <button className="btn solidBtn fullWidth" onClick={() => location.reload()}>
+                    Reload
+                  </button>
+                </div>
+              </Modal>
+            )}
             <div className="content">
               {verifying ? null : (
                 <Routes>

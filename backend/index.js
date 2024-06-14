@@ -22,7 +22,7 @@ if (DEV_MODE) {
 
 // CORS Policy
 app.use(function (_, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "https://hmi-studios.github.io");
+  res.setHeader("Access-Control-Allow-Origin", "https://scraparchive.com");
   res.setHeader("Access-Control-Allow-Credentials", true);
   res.setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept, X-PINGOTHER');
   // res.setHeader('Access-Control-Allow-Methods', '*');
@@ -227,6 +227,7 @@ app.post(`${ADDR_PREFIX}/signup`, async (req, res) => {
 });
 
 app.get(`${ADDR_PREFIX}/*`, (req, res) => {
+  // res.redirect(301, 'https://scraparchive.com');
   res.end(`
 <!DOCTYPE html>
 <html>
@@ -241,7 +242,6 @@ app.get(`${ADDR_PREFIX}/*`, (req, res) => {
         <body>
         <div id="app"></div>
         <script>window.ADDR_PREFIX = '${ADDR_PREFIX}';</script>
-        <script>window.API_URL = '${ADDR_PREFIX}';</script>
         <script src="${ADDR_PREFIX}/bundle.js"></script>
     </body>
 </html>
