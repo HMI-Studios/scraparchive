@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../configuredAxios.js';
 
 import PageTitle from '../components/PageTitle.jsx';
 import InputForm from '../components/InputForm.jsx';

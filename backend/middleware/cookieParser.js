@@ -1,6 +1,8 @@
 const parseCookies = (req, res, next) => {
   req.cookies = {};
 
+  console.log(req.headers)
+
   if ('cookie' in req.headers) {
     for (let cookie of req.headers.cookie.split('; ')) {
       let [key, value] = cookie.split('=');

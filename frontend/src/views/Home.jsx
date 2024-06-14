@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../configuredAxios.js';
 
 import PageTitle from '../components/PageTitle.jsx';
 import TabGroup from '../components/TabGroup.jsx';

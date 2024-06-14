@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../configuredAxios.js';
 
 import Alert from '../components/Alert.jsx';
 import InputField from '../components/InputField.jsx';

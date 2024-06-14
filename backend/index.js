@@ -23,8 +23,8 @@ if (DEV_MODE) {
 // CORS Policy
 app.use(function (_, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "https://hmi-studios.github.io");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Headers", "content-type");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept, X-PINGOTHER');
   // res.setHeader('Access-Control-Allow-Methods', '*');
   next();
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from './configuredAxios.js';
 
 import Home from './views/Home.jsx';
 import Login from './views/Login.jsx';

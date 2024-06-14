@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import axios from '../configuredAxios.js';
 
 import PageTitle from '../components/PageTitle.jsx';
 import EnhancedTable from '../components/EnhancedTable.jsx';
