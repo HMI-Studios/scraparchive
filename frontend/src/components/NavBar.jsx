@@ -11,7 +11,7 @@ const NavBar = ({ setView, user }) => (
         className="logoText"
         to={`${window.ADDR_PREFIX}`}
       >
-        Scrapbook
+        ScrapArchive
       </Link>
     </div>
     <div className="navMenu center">
