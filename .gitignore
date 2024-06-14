@@ -5,8 +5,6 @@
 
 .cache/
 coverage/
-/frontend/dist/*
-!/frontend/dist/index.html
 /frontend/*.log
 
 /backend/package-lock.json
