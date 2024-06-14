@@ -1,4 +1,5 @@
 const { executeQuery, parseData } = require('./util');
+const crypto = require('crypto');
 
 /**
  * 
@@ -97,6 +98,7 @@ async function post(user_id, { title, bucket_id }) {
   const newEntry = {
     title,
     bucket_id: bucket_id || undefined,
+    uuid: crypto.randomUUID(),
   };
   const queryString1 = `INSERT INTO bucket SET ?`;
   const insertData = await executeQuery(queryString1, newEntry);

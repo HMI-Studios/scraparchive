@@ -1,4 +1,5 @@
 const { executeQuery, parseData } = require('./util');
+const crypto = require('crypto');
 
 /**
  * 
@@ -98,6 +99,7 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
       canon_status: canon_status || undefined,
       created_at: new Date(),
       updated_at: new Date(),
+      uuid: crypto.randomUUID(),
     };
 
     const queryString = `INSERT INTO scrap SET ?`;
