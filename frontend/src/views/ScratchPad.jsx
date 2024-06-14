@@ -26,6 +26,11 @@ class ScratchPad extends React.Component {
 
     if (this.props.scrapUUID) {
       this.fetchScrap();
+    } else {
+      const localScrap = localStorage.getItem('scrap');
+      if (localScrap) {
+        this.setState({ body: localScrap });
+      }
     }
   }
 
@@ -50,6 +55,7 @@ class ScratchPad extends React.Component {
 
   async fetchScrap() {
     const { data: scrap } = await axios.get(`/api/scraps/${this.props.scrapUUID}`);
+    localStorage.removeItem('scrap');
     this.setState({ scrap, body: scrap.body });
   }
 
@@ -67,6 +73,7 @@ class ScratchPad extends React.Component {
   submitEntry(data) {
     const { scrapUUID } = this.props;
     const { body } = this.state;
+    localStorage.removeItem('scrap');
     if (scrapUUID) {
       axios.put(`/api/scraps/${scrapUUID}`, {
         ...data,
@@ -101,7 +108,10 @@ class ScratchPad extends React.Component {
         <PageTitle title={'Scratchpad'} />
         {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}/${redirect}`} />}
         {((buckets && (!scrapUUID || scrap)) && <div className="row stack">
-          <TextArea value={body} onChange={(body) => this.setState({ body })} />
+          <TextArea value={body} onChange={(body) => {
+            if (!scrapUUID) localStorage.setItem('scrap', body);
+            this.setState({ body });
+          }} />
           <div className="stack">
             <InputForm submitFn={this.submitEntry} submitText={scrapUUID && 'Save'} fields={{
               title: 'Title',
