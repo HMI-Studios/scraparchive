@@ -85,6 +85,9 @@ const apiRoutes = new APIRoute('/api', {}, [
     new APIRoute('/next', {
       GET: (req) => api.scraps.getPileWithSort(req.session.user.id, req.query.sort ?? req.session.user.default_next, req.query.limit ?? 100, 4)
     }),
+    new APIRoute('/:uuid', {
+      GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.uuid': req.params.uuid }), scraps => scraps[0]),
+    }),
     new APIRoute('/:id', {
       GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.id': req.params.id }), scraps => scraps[0]),
       PUT: (req) => api.scraps.put(req.session.user.id, req.params.id, req.body),
@@ -97,14 +100,23 @@ const apiRoutes = new APIRoute('/api', {}, [
     new APIRoute('/permissions', {
       PUT: (req) => api.buckets.putPermissions(req.session.user.id, req.body),
     }),
-    new APIRoute('/:bucketID', {
-      GET: (req) => api.buckets.getByID(req.session.user.id, req.params.bucketID),
+    new APIRoute('/:bucketUUID', {
+      GET: (req) => api.buckets.getOne(req.session.user.id, { 'bucket.uuid': req.params.bucketUUID }),
     }, [
       new APIRoute('/scraps', {
-        GET: (req) => api.scraps.getManyByUserID(req.session.user.id, false, { 'scrap.bucket_id': req.params.bucketID }),
+        GET: async (req) => {
+          const [status1, bucket] = await api.buckets.getOne(req.session.user.id, { 'bucket.uuid': req.params.bucketUUID });
+          if (status1 !== 200) return [status1];
+          const [status2, scraps] = await api.scraps.getManyByUserID(req.session.user.id, false, { 'scrap.bucket_id': bucket.id });
+          if (status2 !== 200) return [status2];
+          return [200, {
+            bucket,
+            scraps,
+          }];
+        },
       }),
       new APIRoute('/children', {
-        GET: (req) => api.buckets.getByUserID(req.session.user.id, { 'bucket.bucket_id': req.params.bucketID }),
+        GET: (req) => api.buckets.getChildrenByUUID(req.session.user.id, req.params.bucketUUID),
       }),
     ]),
   ]),

@@ -24,16 +24,16 @@ class ScratchPad extends React.Component {
   componentDidMount() {
     this.fetchData();
 
-    if (this.props.scrapID) {
+    if (this.props.scrapUUID) {
       this.fetchScrap();
     }
   }
 
   componentDidUpdate(prevProps, _) {
-    if (prevProps.scrapID !== this.props.scrapID) {
+    if (prevProps.scrapUUID !== this.props.scrapUUID) {
       this.setState({ scrap: null, redirect: null });
 
-      if (this.props.scrapID) {
+      if (this.props.scrapUUID) {
         this.fetchScrap();
       }
     }
@@ -49,26 +49,26 @@ class ScratchPad extends React.Component {
   }
 
   async fetchScrap() {
-    const { data: scrap } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/${this.props.scrapID}`);
+    const { data: scrap } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/${this.props.scrapUUID}`);
     this.setState({ scrap, body: scrap.body });
   }
 
   async nextScrap({ next }) {
-    const { scrapID, user } = this.props;
+    const { scrapUUID, user } = this.props;
     if (user.default_next && !next) user.default_next;
     if (next && next !== user.default_next) await axios.put(`${window.ADDR_PREFIX}/api/users/${user.id}`, { default_next: next });
     const { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/scraps/next?sort=${next}&limit=2`);
     const [scrap, alt] = scraps;
-    if (scrap && Number(scrap.id) !== Number(scrapID)) this.setState({ redirect: `/scratchpad/${scrap.id}` });
-    else if (alt && Number(alt.id) !== Number(scrapID)) this.setState({ redirect: `/scratchpad/${alt.id}` });
+    if (scrap && scrap.uuid !== scrapUUID) this.setState({ redirect: `/scratchpad/${scrap.uuid}` });
+    else if (alt && alt.uuid !== scrapUUID) this.setState({ redirect: `/scratchpad/${alt.uuid}` });
     // else TODO error?
   }
 
   submitEntry(data) {
-    const { scrapID } = this.props;
+    const { scrapUUID } = this.props;
     const { body } = this.state;
-    if (scrapID) {
-      axios.put(`${window.ADDR_PREFIX}/api/scraps/${scrapID}`, {
+    if (scrapUUID) {
+      axios.put(`${window.ADDR_PREFIX}/api/scraps/${scrapUUID}`, {
         ...data,
         body,
       })
@@ -91,19 +91,19 @@ class ScratchPad extends React.Component {
   }
 
   render() {
-    const { scrapID } = this.props;
+    const { scrapUUID } = this.props;
     const { buckets, scrap, body, redirect } = this.state;
 
-    const defaults = scrapID ? scrap : {};
+    const defaults = scrapUUID ? scrap : {};
 
     return (
       <>
         <PageTitle title={'Scratchpad'} />
         {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}${redirect}`} />}
-        {((buckets && (!scrapID || scrap)) && <div className="row stack">
+        {((buckets && (!scrapUUID || scrap)) && <div className="row stack">
           <TextArea value={body} onChange={(body) => this.setState({ body })} />
           <div className="stack">
-            <InputForm submitFn={this.submitEntry} submitText={scrapID && 'Save'} fields={{
+            <InputForm submitFn={this.submitEntry} submitText={scrapUUID && 'Save'} fields={{
               title: 'Title',
               bucket_id: 'Bucket',
               earthdate: 'Start Date',

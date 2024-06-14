@@ -89,7 +89,7 @@ class BucketList extends React.Component {
         <PageTitle title={'Buckets'} />
         <div className="stack">
           <EnhancedTable refresh={this.fetchData} columns={bucketColumns} rows={buckets} defaultSort={'title'} links={{
-            title: (row) => (`/buckets/${row.id}`)
+            title: (row) => (`/buckets/${row.uuid}`)
           }} />
           <TextBtn onClick={() => this.setState({ showEntryForm: !showEntryForm })}>New Bucket</TextBtn>
           {showEntryForm && (

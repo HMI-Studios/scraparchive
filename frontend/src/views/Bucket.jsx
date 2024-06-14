@@ -82,8 +82,7 @@ class Bucket extends React.Component {
       alertCallback: () => {},
     };
     this.fetchData = this.fetchData.bind(this);
-    this.fetchBucket = this.fetchBucket.bind(this);
-    this.fetchScraps = this.fetchScraps.bind(this);
+    this.fetchBucketScraps = this.fetchBucketScraps.bind(this);
     this.fetchChildBuckets = this.fetchChildBuckets.bind(this);
     this.fetchContacts = this.fetchContacts.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
@@ -95,23 +94,22 @@ class Bucket extends React.Component {
   }
 
   componentDidUpdate(prevProps, _) {
-    if (this.props.bucketID !== prevProps.bucketID) {
+    if (this.props.bucketUUID !== prevProps.bucketUUID) {
       this.fetchData();
     }
   }
 
   async fetchData() {
     // await these?
-    this.fetchBucket();
-    this.fetchScraps();
+    this.fetchBucketScraps();
     this.fetchChildBuckets();
     this.fetchContacts();
   }
 
-  async fetchBucket() {
-    const { bucketID } = this.props;
-    const { data: bucket } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketID}`);
-    console.log(bucket)
+  async fetchBucketScraps() {
+    const { bucketUUID } = this.props;
+    const { data } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketUUID}/scraps`);
+    const { bucket, scraps } = data;
     bucket.perms = bucket.perms.map(row => ({
       ...row,
       id: row.user_id,
@@ -124,24 +122,12 @@ class Bucket extends React.Component {
         5: 'Admin',
       }[row.permissions_lvl],
     }));
-    this.setState({ bucket });
-  }
-
-  async fetchScraps() {
-    const { bucketID } = this.props;
-    const { data: scraps } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketID}/scraps`);
-    console.log(scraps)
-    // scraps = scraps.map(row => ({
-    //   ...row,
-    //   posted_on: new Date(row.posted_on),
-    //   column: row.column || '',
-    // }));
-    this.setState({ scraps });
+    this.setState({ bucket, scraps });
   }
 
   async fetchChildBuckets() {
-    const { bucketID } = this.props;
-    const { data: children } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketID}/children`)
+    const { bucketUUID } = this.props;
+    const { data: children } = await axios.get(`${window.ADDR_PREFIX}/api/buckets/${bucketUUID}/children`)
     console.log(children)
     // const income = data.map(row => ({...row, posted_on: new Date(row.posted_on)}));
     this.setState({ children });
@@ -167,14 +153,14 @@ class Bucket extends React.Component {
   }
 
   async changeUserPermissions({ user_id, permissions_lvl, recursive }) {
-    const { bucketID } = this.props;
+    const { bucketUUID } = this.props;
     await axios.put(`${window.ADDR_PREFIX}/api/buckets/permissions`, {
       user_id,
-      bucket_id: bucketID,
+      bucket_id: bucketUUID,
       permissions_lvl,
       recursive,
     });
-    this.fetchBucket();
+    this.fetchBucketScraps();
   }
   
   editAlloc(index, newAlloc) {
@@ -199,7 +185,7 @@ class Bucket extends React.Component {
   }
 
   render() {
-    const { bucketID } = this.props;
+    const { bucketUUID } = this.props;
     const { 
       bucket, children, scraps, contacts,
       showEntryForm,
@@ -213,8 +199,8 @@ class Bucket extends React.Component {
         displayName: 'Scraps',
         content: (
           <div className="stack">
-            <EnhancedTable key={'scraps'} refresh={this.fetchScraps} columns={scrapColumns} rows={scraps} defaultSort={'earthdate'} links={{
-            title: (row) => (`/scratchpad/${row.id}`)
+            <EnhancedTable key={'scraps'} refresh={this.fetchBucketScraps} columns={scrapColumns} rows={scraps} defaultSort={'earthdate'} links={{
+            title: (row) => (`/scratchpad/${row.uuid}`)
           }} />
           </div>
         ),
@@ -224,7 +210,7 @@ class Bucket extends React.Component {
         content: (
           <div className="stack">
             <EnhancedTable key={'children'} refresh={this.fetchChildBuckets} columns={childBucketColumns} rows={children} defaultSort={'title'} links={{
-            title: (row) => (`/buckets/${row.id}`)
+            title: (row) => (`/buckets/${row.uuid}`)
           }} />
           </div>
         ),
@@ -233,7 +219,7 @@ class Bucket extends React.Component {
         displayName: 'Users',
         content: (
           <div className="stack">
-            <EnhancedTable key={'users'} refresh={this.fetchBucket} columns={permColumns} rows={bucket.perms || []} defaultSort={'user_name'} />
+            <EnhancedTable key={'users'} refresh={this.fetchBucketScraps} columns={permColumns} rows={bucket.perms || []} defaultSort={'user_name'} />
             <TextBtn onClick={() => this.setState({ showEntryForm: !showEntryForm })}>Change user permissions</TextBtn>
             {showEntryForm && (
               <InputForm submitFn={this.changeUserPermissions} fields={{

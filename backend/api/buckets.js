@@ -34,14 +34,11 @@ async function getByUserID(user_id, options) {
 /**
  * 
  * @param {number} user_id the id of the current user
- * @param {number} bucket_id id of the bucket to fetch
  * @returns 
  */
-async function getByID(user_id, bucket_id) {
+async function getOne(user_id, options) {
   try {
-    const [status, buckets] = await getByUserID(user_id, {
-      'bucket.id': bucket_id,
-    });
+    const [status, buckets] = await getByUserID(user_id, options);
     const bucket = buckets[0];
 
     const queryString = `
@@ -52,7 +49,7 @@ async function getByID(user_id, bucket_id) {
       INNER JOIN user ON perms.user_id = user.id
       WHERE
         perms.permissions_lvl >= 1
-        AND perms.bucket_id = ${bucket_id};
+        AND perms.bucket_id = ${bucket.id};
     `;
     const perms = await executeQuery(queryString);
 
@@ -63,6 +60,26 @@ async function getByID(user_id, bucket_id) {
       ...bucket,
       perms,
     }];
+  } catch (err) {
+    console.error(err);
+    return [500];
+  }
+}
+
+async function getChildrenByUUID(user_id, uuid) {
+  try {
+    const queryString = `
+      SELECT
+        c.*
+      FROM bucket AS b
+      RIGHT JOIN bucket AS c ON c.bucket_id = b.id
+      INNER JOIN user_bucket_permissions AS perms ON perms.bucket_id = c.id
+      WHERE b.uuid = '${uuid}'
+      AND perms.user_id = ${user_id}
+      AND perms.permissions_lvl >= 1;
+    `;
+    const data = await executeQuery(queryString);
+    return [200, data];
   } catch (err) {
     console.error(err);
     return [500];
@@ -152,7 +169,8 @@ async function post(user_id, { title, bucket_id }) {
 
 module.exports = {
     getByUserID,
-    getByID,
+    getOne,
+    getChildrenByUUID,
     post,
     putPermissions,
   };

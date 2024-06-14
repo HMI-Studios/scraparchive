@@ -58,12 +58,12 @@ class App extends React.Component {
 
     const ScrapWrapper = (props) => {
       const params = useParams();
-      return <ScratchPad {...{ ...props }} scrapID={params.scrapID} />;
+      return <ScratchPad {...{ ...props }} scrapUUID={params.scrapUUID} />;
     };
 
     const BucketWrapper = (props) => {
       const params = useParams();
-      return <Bucket {...{ ...props }} bucketID={params.bucketID} />;
+      return <Bucket {...{ ...props }} bucketUUID={params.bucketUUID} />;
     };
 
     return (
@@ -100,13 +100,13 @@ class App extends React.Component {
                   <Route path={`${ADDR_PREFIX}/scratchpad`} element={
                     <ScratchPad user={user} />
                   } />
-                  <Route path={`${ADDR_PREFIX}/scratchpad/:scrapID`} element={
+                  <Route path={`${ADDR_PREFIX}/scratchpad/:scrapUUID`} element={
                     <ScrapWrapper user={user} />
                   } />
                   <Route path={`${ADDR_PREFIX}/buckets`} element={
                     <BucketList />
                   } />
-                  <Route path={`${ADDR_PREFIX}/buckets/:bucketID/*`} element={
+                  <Route path={`${ADDR_PREFIX}/buckets/:bucketUUID/*`} element={
                     <BucketWrapper user={user} />
                   } />
                   <Route path={`${ADDR_PREFIX}/contacts/*`} element={

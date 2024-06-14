@@ -107,7 +107,7 @@ class BucketList extends React.Component {
             }} />
           )}
           <EnhancedTable refresh={this.fetchData} columns={scrapColumns} rows={scraps} links={{
-            title: (row) => (`/scratchpad/${row.id}`)
+            title: (row) => (`/scratchpad/${row.uuid}`)
           }} />
         </div>
       </>

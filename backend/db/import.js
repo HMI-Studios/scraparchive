@@ -25,7 +25,7 @@ async function dbImport() {
 
   const tables = (await db.queryAsync('SHOW TABLES;'))[0].map(item => item['Tables_in_scraparchive']);
   
-  for(const table of tables) {
+  for (const table of tables) {
     try {
       const data = JSON.parse(await fsPromises.readFile(path.join(__dirname, `export/${table}.json`), { encoding: 'utf8' }));
       for (const id in data.items) {

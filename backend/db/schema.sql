@@ -33,6 +33,7 @@ CREATE TABLE contact (
 
 CREATE TABLE bucket (
   id INT NOT NULL AUTO_INCREMENT,
+  uuid VARCHAR(36) UNIQUE,
   title VARCHAR(64),
   bucket_id INT,
   FOREIGN KEY (bucket_id) REFERENCES bucket (id),
@@ -49,6 +50,7 @@ CREATE TABLE user_bucket_permissions (
 
 CREATE TABLE scrap (
   id INT NOT NULL AUTO_INCREMENT,
+  uuid VARCHAR(36) UNIQUE,
   author_id INT,
   bucket_id INT,
   title VARCHAR(64),

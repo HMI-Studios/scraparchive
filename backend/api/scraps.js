@@ -13,7 +13,7 @@ async function getManyByUserID(user_id, includeBody, options, orderClause, extra
       SELECT
         scrap.id, scrap.author_id, scrap.bucket_id, scrap.title,
         scrap.earthdate, scrap.earthtime, scrap.canon_status,
-        scrap.created_at, scrap.updated_at,
+        scrap.created_at, scrap.updated_at, scrap.uuid,
         ${includeBody ? 'scrap.body,' : ''}
         user.username as author,
         bucket.title as bucket

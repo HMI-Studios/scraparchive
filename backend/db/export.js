@@ -8,7 +8,7 @@ const path = require('path');
 async function dbExport() {
   const tables = (await db.queryAsync('SHOW TABLES;'))[0].map(item => item['Tables_in_scraparchive']);
   
-  for(const table of tables) {
+  for (const table of tables) {
     const types = {};
     const typeArray = (await db.queryAsync(`DESCRIBE ${table};`))[0].map(item => types[item.Field] = item.Type);
     console.log(types)
