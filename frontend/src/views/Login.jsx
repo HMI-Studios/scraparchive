@@ -16,7 +16,7 @@ class Login extends React.Component {
   }
 
   login({ email, password }) {
-    axios.post(`${window.API_URL}/login`, { email, password })
+    axios.post('/login', { email, password })
     .then(() => {
       this.props.verifySession();
     })

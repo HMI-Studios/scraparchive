@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://api.example.com', // Replace with your API base URL
+  baseURL: 'https://hmi.dynu.net/scraparchive', // Replace with your API base URL
   withCredentials: true,
 });
 

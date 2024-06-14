@@ -3,7 +3,7 @@ const api = require('../api');
 const { ADDR_PREFIX } = require('../config');
 
 module.exports.createSession = (req, res, next) => {
-  console.log('res cookies', res.cookies);
+  console.log('req cookies', req.cookies);
   if (req.cookies['archiviumuid']) {
     api.session.getOne({hash: req.cookies['archiviumuid']})
       .then((session) => {

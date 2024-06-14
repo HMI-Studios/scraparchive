@@ -15,7 +15,7 @@ class Signup extends React.Component {
   }
 
   signup({ username, email, password }) {
-    axios.post(`${window.API_URL}/signup`, { username, email, password })
+    axios.post('/signup', { username, email, password })
     .then(() => {
       this.props.verifySession();
     })
@@ -46,7 +46,7 @@ class Signup extends React.Component {
           }} />
           <Link
             className="btn textBtn"
-            to={`${window.API_URL}/login`}
+            to={`${window.ADDR_PREFIX}/login`}
           >
             Login to existing user account
           </Link>
