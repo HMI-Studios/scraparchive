@@ -20,6 +20,15 @@ if (DEV_MODE) {
   })
 }
 
+// CORS Policy
+app.use(function (_, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "https://hmi-studios.github.io");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
+  // res.setHeader('Access-Control-Allow-Methods', '*');
+  next();
+});
+
 // Serve static code and assets
 app.use(`${ADDR_PREFIX}/`, express.static('../frontend/dist/'))
 
@@ -217,7 +226,6 @@ app.post(`${ADDR_PREFIX}/signup`, async (req, res) => {
   }
 });
 
-
 app.get(`${ADDR_PREFIX}/*`, (req, res) => {
   res.end(`
 <!DOCTYPE html>
@@ -233,11 +241,12 @@ app.get(`${ADDR_PREFIX}/*`, (req, res) => {
         <body>
         <div id="app"></div>
         <script>window.ADDR_PREFIX = '${ADDR_PREFIX}';</script>
+        <script>window.API_URL = '${ADDR_PREFIX}';</script>
         <script src="${ADDR_PREFIX}/bundle.js"></script>
     </body>
 </html>
   `);
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
