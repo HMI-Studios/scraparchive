@@ -113,11 +113,11 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
 /**
  * 
  * @param {number} user_id the id of the current user
- * @param {number} scrap_id the id of scrap to update
+ * @param {number} scrap_uuid the uuid of scrap to update
  * @param {*} entryData data to update
  * @returns 
  */
-async function put(user_id, scrap_id, { bucket_id, title, body, earthdate, earthtime, canon_status }) {
+async function put(user_id, scrap_uuid, { bucket_id, title, body, earthdate, earthtime, canon_status }) {
   try {
 
     const changes = {
@@ -133,7 +133,7 @@ async function put(user_id, scrap_id, { bucket_id, title, body, earthdate, earth
     const queryString1 = `
       UPDATE scrap SET ? 
       WHERE
-        id = ${scrap_id}
+        uuid = '${scrap_uuid}'
         ${bucket_id
           ? `AND ${user_id} IN (SELECT perms.user_id FROM user_bucket_permissions as perms WHERE perms.bucket_id = ${bucket_id})`
           : ''

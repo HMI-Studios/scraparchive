@@ -54,6 +54,10 @@ class APIRoute {
   setup(parentPath) {
     const path = parentPath + this.path;
     console.log(path);
+    app.options(path, async (req, res) => {
+      res.setHeader('Access-Control-Allow-Methods', Object.keys(this.methodFuncs).join(','));
+      return res.end();
+    });
     app.all(path, Auth.verifySession, async (req, res) => {
       const method = req.method.toUpperCase();
       console.log(path, method, Object.keys(this.methodFuncs))
@@ -96,10 +100,7 @@ const apiRoutes = new APIRoute('/api', {}, [
     }),
     new APIRoute('/:uuid', {
       GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.uuid': req.params.uuid }), scraps => scraps[0]),
-    }),
-    new APIRoute('/:id', {
-      GET: (req) => frmtData(api.scraps.getManyByUserID(req.session.user.id, true, { 'scrap.id': req.params.id }), scraps => scraps[0]),
-      PUT: (req) => api.scraps.put(req.session.user.id, req.params.id, req.body),
+      PUT: (req) => api.scraps.put(req.session.user.id, req.params.uuid, req.body),
     }),
   ]),
   new APIRoute('/buckets', {
