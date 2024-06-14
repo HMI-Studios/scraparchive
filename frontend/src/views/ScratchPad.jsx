@@ -59,8 +59,8 @@ class ScratchPad extends React.Component {
     if (next && next !== user.default_next) await axios.put(`/api/users/${user.id}`, { default_next: next });
     const { data: scraps } = await axios.get(`/api/scraps/next?sort=${next}&limit=2`);
     const [scrap, alt] = scraps;
-    if (scrap && scrap.uuid !== scrapUUID) this.setState({ redirect: `/scratchpad/${scrap.uuid}` });
-    else if (alt && alt.uuid !== scrapUUID) this.setState({ redirect: `/scratchpad/${alt.uuid}` });
+    if (scrap && scrap.uuid !== scrapUUID) this.setState({ redirect: `scratchpad/${scrap.uuid}` });
+    else if (alt && alt.uuid !== scrapUUID) this.setState({ redirect: `scratchpad/${alt.uuid}` });
     // else TODO error?
   }
 
@@ -85,7 +85,7 @@ class ScratchPad extends React.Component {
       .then(({ data }) => {
         this.setState({ scrap: null, body: '\t' });
         this.fetchData();
-        // this.setState({ redirect: `/scratchpad/${data.insertId}` });
+        // this.setState({ redirect: `scratchpad/${data.insertId}` });
       })
     }
   }
@@ -99,7 +99,7 @@ class ScratchPad extends React.Component {
     return (
       <>
         <PageTitle title={'Scratchpad'} />
-        {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}${redirect}`} />}
+        {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}/${redirect}`} />}
         {((buckets && (!scrapUUID || scrap)) && <div className="row stack">
           <TextArea value={body} onChange={(body) => this.setState({ body })} />
           <div className="stack">

@@ -30,7 +30,7 @@ class Signup extends React.Component {
 
     return (
       <div className="auth">
-        {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}${redirect}`} />}
+        {redirect !== null && <Navigate to={`${window.ADDR_PREFIX}/${redirect}`} />}
         <div className="stack">
           <InputForm submitFn={this.signup} submitText={'Sign Up'} fields={{
             username: 'Username',
