@@ -44,9 +44,8 @@ class App extends React.Component {
     .catch(({ response }) => {
       if (response.status === 401) {
         this.setState({ user: null, verifying: false });
-      } else if (response.status === 504) {
-        this.setState({ serverDown: true });
       } else {
+        this.setState({ serverDown: true });
         console.error(response);
       }
     })
