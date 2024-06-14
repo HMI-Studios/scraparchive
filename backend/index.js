@@ -149,7 +149,7 @@ apiRoutes.setup(ADDR_PREFIX);
 app.post(`${ADDR_PREFIX}/logout`, async (req, res) => {
   try {
     await api.session.del({ id: req.session.id })
-    res.clearCookie('archiviumuid', req.session.id);
+    res.clearCookie('scraparchiveid', req.session.id);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);

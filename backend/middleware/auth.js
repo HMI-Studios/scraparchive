@@ -3,9 +3,8 @@ const api = require('../api');
 const { ADDR_PREFIX } = require('../config');
 
 module.exports.createSession = (req, res, next) => {
-  console.log('req cookies', req.cookies);
-  if (req.cookies['archiviumuid']) {
-    api.session.getOne({hash: req.cookies['archiviumuid']})
+  if (req.cookies['scraparchiveid']) {
+    api.session.getOne({hash: req.cookies['scraparchiveid']})
       .then((session) => {
         if (session) {
           // console.log('session:', session.user);
@@ -30,7 +29,7 @@ module.exports.createSession = (req, res, next) => {
             })
             .then((session) => {
               // console.log('session:', session)
-              res.cookie('archiviumuid', session.hash);
+              res.cookie('scraparchiveid', session.hash, { secure: true, sameSite: 'None' });
               req.session = {
                 id: session.id,
                 hash: session.hash
@@ -54,7 +53,7 @@ module.exports.createSession = (req, res, next) => {
     })
     .then((session) => {
       // console.log('session:', session)
-      res.cookie('archiviumuid', session.hash);
+      res.cookie('scraparchiveid', session.hash, { secure: true, sameSite: 'None' });
       req.session = {
         id: session.id,
         hash: session.hash
