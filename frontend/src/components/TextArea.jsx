@@ -28,6 +28,11 @@ const TextArea = ({ value, onChange }) => {
       textarea.value = textarea.value.substring(0, start) + char + textarea.value.substring(end);
       textarea.selectionStart = textarea.selectionEnd = start + char.length;
       handleChange(textarea.value);
+    } else if (e.key === '-' && textarea.value.substring(start-1, start) === '-') {
+      e.preventDefault();
+      textarea.value = textarea.value.substring(0, start-1) + '—' + textarea.value.substring(end);
+      textarea.selectionStart = textarea.selectionEnd = start;
+      handleChange(textarea.value);
     }
   };
 
