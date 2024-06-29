@@ -30,7 +30,7 @@ app.use(function (_, res, next) {
 });
 
 // Serve static code and assets
-app.use(`${ADDR_PREFIX}/`, express.static('../frontend/dist/'))
+// app.use(`${ADDR_PREFIX}/`, express.static('../frontend/dist/'));
 
 app.get(`${ADDR_PREFIX}/verify`, Auth.verifySession, (req, res) => {
   res.status(200);
@@ -234,19 +234,31 @@ app.get(`${ADDR_PREFIX}/*`, (req, res) => {
 <html>
     <head>
         <title>${APP_NAME}</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Raleway&family=Roboto&display=swap" rel="stylesheet">
-        </head>
-        <body>
-        <div id="app"></div>
-        <script>window.ADDR_PREFIX = '${ADDR_PREFIX}';</script>
-        <script src="${ADDR_PREFIX}/bundle.js"></script>
+    </head>
+    <body>
+        <h1>Moved</h1>
+        <p>Scrap Archive has moved, please go to <a href="https://scraparchive.com">scraparchive.com</a></p>
     </body>
 </html>
   `);
+//   res.end(`
+// <!DOCTYPE html>
+// <html>
+//     <head>
+//         <title>${APP_NAME}</title>
+//         <meta charset="utf-8">
+//         <meta name="viewport" content="initial-scale=1, width=device-width" />
+//         <link rel="preconnect" href="https://fonts.googleapis.com">
+//         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+//         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Raleway&family=Roboto&display=swap" rel="stylesheet">
+//     </head>
+//     <body>
+//         <div id="app"></div>
+//         <script>window.ADDR_PREFIX = '${ADDR_PREFIX}';</script>
+//         <script src="${ADDR_PREFIX}/bundle.js"></script>
+//     </body>
+// </html>
+//   `);
 });
 
 app.listen(PORT, () => {
