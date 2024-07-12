@@ -55,6 +55,7 @@ const TextArea = ({ value, onChange }) => {
     if (start === 0) text = '\t' + text;
     textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
     textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    handleChange(textarea.value);
   }
 
   return (
