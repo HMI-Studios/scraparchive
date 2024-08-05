@@ -89,6 +89,8 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
       if (permissionsLvl < 3) return [403];
     }
 
+    const uuid = crypto.randomUUID();
+
     const newEntry = {
       author_id: user_id,
       bucket_id: bucket_id || undefined,
@@ -99,11 +101,11 @@ async function post(user_id, { bucket_id, title, body, earthdate, earthtime, can
       canon_status: canon_status || undefined,
       created_at: new Date(),
       updated_at: new Date(),
-      uuid: crypto.randomUUID(),
+      uuid,
     };
 
     const queryString = `INSERT INTO scrap SET ?`;
-    return [201, await executeQuery(queryString, newEntry)];
+    return [201, { ...(await executeQuery(queryString, newEntry)), uuid }];
   } catch (err) {
     console.error(err);
     return [500];

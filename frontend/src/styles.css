@@ -449,3 +449,18 @@ textarea::before {
   max-width: 500px;
   margin: 0 auto;
 }
+
+/* Markdown Styles */
+.markdown {
+  text-wrap: wrap;
+  font-size: 18px;
+}
+
+.markdown p {
+  text-indent: 36px;
+}
+
+.markdown h1 {
+  padding-bottom: 10px;
+  border-bottom: 2px solid silver;
+}

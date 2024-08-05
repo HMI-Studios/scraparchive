@@ -8,6 +8,7 @@ import Signup from './views/Signup.jsx';
 import Profile from './views/Profile.jsx';
 
 import ScrapPile from './views/ScrapPile.jsx';
+import ViewScrap from './views/ViewScrap.jsx';
 import ScratchPad from './views/ScratchPad.jsx';
 import BucketList from './views/BucketList.jsx';
 import Bucket from './views/Bucket.jsx';
@@ -63,12 +64,17 @@ class App extends React.Component {
       const params = useParams();
       return <ScratchPad {...{ ...props }} scrapUUID={params.scrapUUID} />;
     };
-
+    
     const BucketWrapper = (props) => {
       const params = useParams();
       return <Bucket {...{ ...props }} bucketUUID={params.bucketUUID} />;
     };
 
+    const ViewScrapWrapper = (props) => {
+      const params = useParams();
+      return <ViewScrap {...{ ...props }} scrapUUID={params.scrapUUID} />;
+    };
+    
     return (
       <div className={darkMode ? 'dark' : 'light'}>
         <div className="page">
@@ -117,6 +123,9 @@ class App extends React.Component {
                   } />
                   <Route path={`${ADDR_PREFIX}/scratchpad/:scrapUUID`} element={
                     <ScrapWrapper user={user} />
+                  } />
+                  <Route path={`${ADDR_PREFIX}/scraps/:scrapUUID`} element={
+                    <ViewScrapWrapper user={user} />
                   } />
                   <Route path={`${ADDR_PREFIX}/buckets`} element={
                     <BucketList />

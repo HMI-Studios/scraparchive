@@ -21,7 +21,7 @@ const TextArea = ({ value, onChange }) => {
   
       const keyText = {
         'Tab': '\t',
-        'Enter': '\r\n\t',
+        'Enter': '\n\n',
       };
       const char = keyText[e.key] ?? '';
 
@@ -39,7 +39,7 @@ const TextArea = ({ value, onChange }) => {
   const handleCopy = (e, isCut) => {
     e.preventDefault();
     const textarea = textareaRef.current;
-    e.clipboardData.setData('text/plain', textarea.value.replaceAll('\n\t', '\n').substring(Number(textarea.value[0] === '\t')));
+    e.clipboardData.setData('text/plain', textarea.value/*.replaceAll('\n\t', '\n').substring(Number(textarea.value[0] === '\t'))*/);
     if (isCut) {
       textarea.value = '';
       handleChange(textarea.value);
@@ -48,11 +48,11 @@ const TextArea = ({ value, onChange }) => {
 
   const handlePaste = (e) => {
     e.preventDefault();
-    let text = e.clipboardData.getData('text/plain').replaceAll('\r\n', '\n').replaceAll('\n', '\r\n\t');
+    let text = e.clipboardData.getData('text/plain');//.replaceAll('\r\n', '\n').replaceAll('\n', '\r\n\t');
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-    if (start === 0) text = '\t' + text;
+    // if (start === 0) text = '\t' + text;
     textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
     textarea.selectionStart = textarea.selectionEnd = start + text.length;
     handleChange(textarea.value);

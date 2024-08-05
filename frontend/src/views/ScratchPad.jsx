@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import axios from '../configuredAxios.js';
 
 import PageTitle from '../components/PageTitle.jsx';
@@ -12,7 +12,7 @@ class ScratchPad extends React.Component {
     this.state = {
       buckets: null,
       scrap: null,
-      body: '\t',
+      body: '',
       redirect: null,
     };
     this.fetchData = this.fetchData.bind(this);
@@ -90,9 +90,9 @@ class ScratchPad extends React.Component {
         body,
       })
       .then(({ data }) => {
-        this.setState({ scrap: null, body: '\t' });
-        this.fetchData();
-        // this.setState({ redirect: `scratchpad/${data.insertId}` });
+        // this.setState({ scrap: null, body: '' });
+        // this.fetchData();
+        this.setState({ redirect: `scratchpad/${data.uuid}` });
       })
     }
   }
@@ -137,6 +137,7 @@ class ScratchPad extends React.Component {
                 5: 'Confirmed Canon',
               },
             }}/>
+            {scrap &&<Link className="btn solidBtn" to={`${window.ADDR_PREFIX}/scraps/${scrap.uuid}`}>Preview</Link>}
             <hr style={{ width: '100%' }} />
             <InputForm submitFn={this.nextScrap} submitText={'Next'} fields={{
               next: 'Next scrap in pile',
